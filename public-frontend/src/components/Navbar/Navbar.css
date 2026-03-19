@@ -1,11 +1,10 @@
 .navbar {
-  background-color: #ffffff;
-  height: 70px;
+  background-color: #2c2f33; /* Dark gray */
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #1a1a1a;
   position: sticky;
   top: 0;
   z-index: 999;
@@ -17,91 +16,53 @@
   align-items: center;
   width: 100%;
   max-width: 1200px;
-  padding: 0 20px;
+  padding: 0 40px;
 }
 
 .navbar-logo {
-  color: #333;
-  text-decoration: none;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.nav-menu {
   display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-item {
-  margin-left: 2rem;
-}
-
-.nav-links {
-  color: #333;
+  align-items: center;
+  gap: 10px;
+  color: #f7f4ea; /* Creamy white text */
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  transition: color 0.3s ease;
 }
 
-.nav-links:hover {
-  color: #007bff; /* Change this to your brand color */
+.logo-icon {
+  font-size: 1.8rem;
+  /* Ideally replace with an SVG combining globe and book */
 }
 
-/* Mobile Menu Icon (Hidden by default) */
-.menu-icon {
-  display: none;
-  flex-direction: column;
+.logo-text {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+.login-btn {
+  background-color: transparent;
+  color: #f7f4ea;
+  border: 1px solid #888;
+  padding: 6px 20px;
+  border-radius: 4px;
+  font-size: 0.95rem;
   cursor: pointer;
-  gap: 5px;
+  transition: all 0.2s ease;
+  font-family: inherit;
 }
 
-.menu-icon .bar {
-  width: 25px;
-  height: 3px;
-  background-color: #333;
-  transition: all 0.3s ease;
-  border-radius: 2px;
+.login-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #f7f4ea;
 }
 
-/* --- Responsive Media Query --- */
 @media screen and (max-width: 768px) {
-  .menu-icon {
-    display: flex;
-  }
-
-  .nav-menu {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    position: absolute;
-    top: 70px; /* Right below the navbar */
-    left: -100%; /* Hidden off-screen by default */
-    background-color: #ffffff;
-    transition: all 0.4s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  }
-
-  .nav-menu.active {
-    left: 0; /* Slides in when active */
-  }
-
-  .nav-item {
-    margin: 0;
-    text-align: center;
-    padding: 1.5rem 0;
-    border-bottom: 1px solid #eee;
-  }
-
-  /* Optional: Simple animation for the hamburger turning into an 'X' */
-  .menu-icon .bar.open:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
-  }
-  .menu-icon .bar.open:nth-child(2) {
-    opacity: 0;
-  }
-  .menu-icon .bar.open:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
+  .navbar-container {
+    padding: 0 20px;
   }
 }

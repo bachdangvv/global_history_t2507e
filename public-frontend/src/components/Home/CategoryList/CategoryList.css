@@ -1,0 +1,29 @@
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px 10px;
+}
+
+@media (min-width: 768px) {
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.category-icon {
+  font-size: 1.1rem;
+  color: #555;
+  width: 20px;
+  text-align: center;
+}
+
+.category-name {
+  font-size: 0.9rem;
+  color: #333;
+}

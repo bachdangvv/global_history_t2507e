@@ -1,0 +1,107 @@
+.widget-container {
+  margin-bottom: 30px;
+}
+
+.widget-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.widget-header h3 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: #222;
+  margin: 0;
+}
+
+.subtitle-vi {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.diff-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.diff-content {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.diff-line {
+  display: flex;
+  padding: 2px 15px;
+}
+
+.diff-added {
+  background-color: #e6ffed;
+}
+
+.diff-removed {
+  background-color: #ffeef0;
+}
+
+.diff-num {
+  color: #999;
+  width: 30px;
+  user-select: none;
+  font-size: 0.85rem;
+}
+
+.diff-text {
+  color: #333;
+  white-space: pre;
+}
+
+.diff-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #fafafa;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.upvote-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #28a745;
+  font-weight: bold;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.upvote-arrow {
+  font-size: 1rem;
+}
+
+.author-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.author-name {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  color: #28a745;
+  font-weight: bold;
+}

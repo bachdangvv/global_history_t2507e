@@ -1,0 +1,69 @@
+.article-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  padding: 15px;
+}
+
+.article-content-wrapper {
+  display: flex;
+  gap: 15px;
+}
+
+.article-image {
+  width: 150px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.article-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.article-title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  margin: 0 0 10px 0;
+  color: #222;
+}
+
+.article-summary {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0 0 15px 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.vote-section {
+  margin-top: auto;
+}
+
+.vote-bar-container {
+  height: 6px;
+  background-color: #dc3545; /* Red for dislikes */
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.vote-bar-likes {
+  height: 100%;
+  background-color: #28a745; /* Green for likes */
+}
+
+.vote-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #666;
+}
