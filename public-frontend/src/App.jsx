@@ -6,8 +6,8 @@ import Home from './pages/Home/Home';
 // import Articles from './pages/Articles';
 // import ArticleDetail from './pages/ArticleDetail';
 // import Categories from './pages/Categories';
-// import Login from './pages/Login';
-// import Register from './pages/Register';
+import Login from './pages/Login/Login';
+import Register from './pages/Register/Register';
 // import SubmitArticle from './pages/SubmitArticle';
 import './index.css';
 import './App.css';
@@ -23,10 +23,10 @@ function App() {
               <Route path="/" element={<Home />} />
               {/* <Route path="/articles" element={<Articles />} />
               <Route path="/articles/:id" element={<ArticleDetail />} />
-              <Route path="/categories" element={<Categories />} />
+              <Route path="/categories" element={<Categories />} /> */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/submit" element={<SubmitArticle />} /> */}
+              {/* <Route path="/submit" element={<SubmitArticle />} /> */}
             </Routes>
           </main>
           <Footer />
