@@ -42,6 +42,50 @@
 .navbar-actions {
   display: flex;
   align-items: center;
+  gap: 20px;
+}
+
+.search-icon-wrapper {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon-container {
+  width: 50px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.search-icon {
+  font-size: 1.1rem;
+  color: #f7f4ea;
+}
+
+.search-icon-wrapper:hover .search-icon-container {
+  background-color: rgba(231, 76, 60, 0.2);
+  transform: scale(1.1);
+}
+
+.search-tooltip {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1a1d21;
+  color: #f7f4ea;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  border: 1px solid #444;
+  z-index: 1000;
+  pointer-events: none;
 }
 
 .login-btn {

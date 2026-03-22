@@ -24,11 +24,15 @@
   padding: 0;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 html, body {
   height: 100%; /* Crucial for the sticky footer layout */
   width: 100%;
   font-family: var(--font-body);
-  background-color: var(--bg-color);
+  background-color: #0a0a0a;
   color: var(--text-main);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
