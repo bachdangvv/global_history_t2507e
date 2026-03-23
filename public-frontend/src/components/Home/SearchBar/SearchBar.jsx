@@ -5,7 +5,7 @@ const SearchBar = () => {
   return (
     <div className="search-bar-container">
       <div className="search-header">
-        <h2>Search</h2>
+        <h2>Tìm kiếm</h2>
       </div>
       <div className="search-input-group">
         <div className="input-wrapper">

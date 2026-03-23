@@ -7,7 +7,7 @@ const CountryList = ({ data }) => {
   return (
     <div className="widget-container">
       <div className="widget-header">
-        <h3>Country List</h3>
+        <h3>Theo nước</h3>
         <span className="subtitle-vi">Xem thêm</span>
       </div>
       

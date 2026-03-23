@@ -28,5 +28,5 @@
 
 .country-name {
   font-size: 0.95rem;
-  color: #333;
+  color: var(--text-heading);
 }

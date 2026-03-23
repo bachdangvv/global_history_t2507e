@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: flex-start;
   padding: 60px 20px;
-  background-color: var(--bg-color, #f7f4ea);
+  background-color: var(--bg-color);
   min-height: calc(100vh - 130px);
 }
 
@@ -18,19 +18,19 @@
 .auth-title {
   font-family: "Merriweather", "Georgia", serif;
   font-size: 1.8rem;
-  color: #1a1a1a;
+  color: var(--text-heading);
   margin-bottom: 25px;
   text-align: center;
   font-weight: normal;
 }
 
 .auth-card {
-  background-color: #ffffff;
+  background-color: var(--bg-color);
   width: 100%;
   border-radius: 4px;
   padding: 30px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e0ddd1;
+  border: 1px solid var(--border-light);
 }
 
 .auth-form {
@@ -46,9 +46,9 @@
 }
 
 .form-group label {
-  font-family: "Merriweather", "Georgia", serif;
+  font-family: var(--font-heading);
   font-size: 1rem;
-  color: #1a1a1a;
+  color: var(--text-heading);
 }
 
 .input-with-icon {
@@ -60,7 +60,7 @@
 .input-with-icon .icon {
   position: absolute;
   left: 10px;
-  color: #777;
+  color: var(--text-main);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,13 +70,13 @@
 .form-group input {
   width: 100%;
   padding: 10px 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-light);
   border-radius: 4px;
   font-size: 0.95rem;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-body);
   outline: none;
   transition: border-color 0.2s;
-  background-color: #fcfcfc;
+  background-color: var(--bg-color);
 }
 
 .input-with-icon input {
@@ -85,7 +85,7 @@
 
 .input-with-icon input:focus,
 .form-group input:focus {
-  border-color: #a68c53;
+  border-color: var(--primary-accent);
 }
 
 .form-actions {
@@ -96,7 +96,7 @@
 }
 
 .forgot-password {
-  color: #1a1a1a;
+  color: var(--text-heading);
   font-size: 0.85rem;
   text-decoration: none;
 }
@@ -106,12 +106,12 @@
 }
 
 .submit-btn {
-  background: linear-gradient(to bottom, #bd9c5b, #977b3b);
-  color: white;
-  border: 1px solid #856a2f;
+  background: var(--primary-accent);
+  color: var(--bg-color);
+  border: 1px solid var(--border-light);
   padding: 8px 20px;
   border-radius: 3px;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-body);
   font-size: 0.95rem;
   cursor: pointer;
   box-shadow: 0 2px 3px rgba(0,0,0,0.1);
@@ -119,22 +119,22 @@
 }
 
 .submit-btn:hover {
-  opacity: 0.9;
+  background: var(--primary-hover);
 }
 
 .auth-footer {
   margin-top: 25px;
   text-align: center;
   font-size: 0.9rem;
-  color: #1a1a1a;
+  color: var(--text-heading);
 }
 
 .auth-footer a {
-  color: #1a1a1a;
+  color: var(--text-heading);
   font-weight: 500;
   text-decoration: underline;
 }
 
 .auth-footer a:hover {
-  color: #977b3b;
+  color: var(--primary-hover);
 }

@@ -2,25 +2,25 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
-  background-color: #f7f4ea; /* Creamy beige from mockup */
+  background-color: var(--bg-color);
   min-height: calc(100vh - 60px - 70px); /* Adjust based on navbar/footer height */
 }
 
 /* Base styles for the main app background to ensure the whole page is creamy beige */
 :global(body) {
-  background-color: #f7f4ea;
+  background-color: var(--bg-color);
   margin: 0;
 }
 
 .home-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 40px;
 }
 
 @media (min-width: 900px) {
   .home-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 60px;
   }
 }
@@ -29,4 +29,5 @@
 .home-grid-right {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }

@@ -7,7 +7,7 @@ const CategoryList = ({ data }) => {
   return (
     <div className="widget-container">
       <div className="widget-header">
-        <h3>Category List</h3>
+        <h3>Theo chủ đề</h3>
         <span className="subtitle-vi">Xem thêm</span>
       </div>
       

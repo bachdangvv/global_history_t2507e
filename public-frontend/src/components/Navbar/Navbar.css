@@ -1,10 +1,10 @@
 .navbar {
-  background-color: #2c2f33; /* Dark gray */
+  background-color: var(--header-footer-bg);
   height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid #1a1a1a;
+  border-bottom: 1px solid var(--text-heading);
   position: sticky;
   top: 0;
   z-index: 999;
@@ -23,7 +23,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #f7f4ea; /* Creamy white text */
+  color: var(--bg-color);
   text-decoration: none;
 }
 
@@ -46,8 +46,8 @@
 
 .login-btn {
   background-color: transparent;
-  color: #f7f4ea;
-  border: 1px solid #888;
+  color: var(--bg-color);
+  border: 1px solid var(--border-light);
   padding: 6px 20px;
   border-radius: 4px;
   font-size: 0.95rem;
@@ -58,7 +58,13 @@
 
 .login-btn:hover {
   background-color: rgba(255, 255, 255, 0.1);
-  border-color: #f7f4ea;
+  color: var(--bg-color);
+  border-color: var(--bg-color);
+  transition: color 0.2s ease;
+}
+
+.navbar-logo:hover {
+  color: rgba(247, 244, 234, 0.7);
 }
 
 @media screen and (max-width: 768px) {

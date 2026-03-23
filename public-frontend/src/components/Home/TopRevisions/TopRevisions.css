@@ -12,18 +12,18 @@
 .widget-header h3 {
   font-family: var(--font-heading);
   font-size: 1.5rem;
-  color: #222;
+  color: var(--text-heading);
   margin: 0;
 }
 
 .subtitle-vi {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-main);
 }
 
 .diff-card {
-  background: white;
-  border: 1px solid #e0e0e0;
+  background: var(--bg-color);
+  border: 1px solid var(--border-light);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
@@ -33,7 +33,8 @@
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9rem;
   padding: 10px 0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border-light);
+  overflow-x: auto;
 }
 
 .diff-line {
@@ -42,22 +43,22 @@
 }
 
 .diff-added {
-  background-color: #e6ffed;
+  background-color: var(--diff-add-bg);
 }
 
 .diff-removed {
-  background-color: #ffeef0;
+  background-color: var(--diff-remove-bg);
 }
 
 .diff-num {
-  color: #999;
+  color: var(--text-main);
   width: 30px;
   user-select: none;
   font-size: 0.85rem;
 }
 
 .diff-text {
-  color: #333;
+  color: var(--text-heading);
   white-space: pre;
 }
 
@@ -66,7 +67,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 15px;
-  background-color: #fafafa;
+  background-color: var(--bg-color);
 }
 
 .author-info {
@@ -79,7 +80,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #28a745;
+  color: var(--success-green);
   font-weight: bold;
   font-size: 0.9rem;
   line-height: 1;
@@ -97,11 +98,11 @@
 
 .author-name {
   font-size: 0.95rem;
-  color: #333;
+  color: var(--text-heading);
 }
 
 .status-badge {
   font-size: 0.8rem;
-  color: #28a745;
+  color: var(--success-green);
   font-weight: bold;
 }

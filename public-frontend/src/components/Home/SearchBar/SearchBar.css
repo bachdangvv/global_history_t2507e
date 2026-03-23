@@ -9,7 +9,7 @@
 .search-header h2 {
   font-family: var(--font-heading);
   font-size: 1.8rem;
-  color: #333;
+  color: var(--text-heading);
   margin-bottom: 10px;
 }
 
@@ -31,13 +31,13 @@
   left: 15px;
   top: 50%;
   transform: translateY(-50%);
-  color: #888;
+  color: var(--text-main);
 }
 
 .search-input {
   width: 100%;
   padding: 12px 15px 12px 40px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-light);
   border-radius: 4px;
   font-size: 1rem;
   font-family: inherit;
@@ -51,7 +51,7 @@
   background-color: transparent;
   border: none;
   font-size: 0.95rem;
-  color: #333;
+  color: var(--text-heading);
   cursor: pointer;
 }
 

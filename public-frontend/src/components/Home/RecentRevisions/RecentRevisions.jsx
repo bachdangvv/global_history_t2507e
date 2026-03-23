@@ -7,7 +7,7 @@ const RecentRevisions = ({ data }) => {
   return (
     <div className="widget-container">
       <div className="widget-header">
-        <h3>Recent Revision</h3>
+        <h3>Chỉnh sửa mới nhất</h3>
         <span className="subtitle-vi">Xem thêm</span>
       </div>
       

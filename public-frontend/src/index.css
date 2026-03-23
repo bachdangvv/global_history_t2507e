@@ -17,7 +17,8 @@
   
   /* UI Elements (Extracted directly from your image) */
   --border-light: #e0dcd0;   /* Subtle borders for the cards and search bar */
-  --success-green: #16a34a;  /* The bold green used for the upvote arrow and 'ĐÃ KIỂM DUYỆT' badge */
+  --success-green: #28a745;  /* The bold green used for the upvote arrow and 'ĐÃ KIỂM DUYỆT' badge */
+  --success-red: #dc3545;
   
   /* Diff Viewer Colors (For the Top Upvote Revision block) */
   --diff-add-bg: #e6ffed;    /* Light green background for [+] rows */
@@ -38,8 +39,13 @@
 }
 
 html, body {
-  height: 100%; /* Crucial for the sticky footer layout */
+  height: auto;
+  min-height: 100%;
   width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   font-family: var(--font-body);
   background-color: var(--bg-color);
   color: var(--text-main);
