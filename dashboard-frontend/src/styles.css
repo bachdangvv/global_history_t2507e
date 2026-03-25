@@ -57,7 +57,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 20px;
+  padding: 25px;
   position: sticky;
   top: 24px;
 }
