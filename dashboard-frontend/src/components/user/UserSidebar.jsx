@@ -12,13 +12,13 @@ const navItems = [
   {
     to: "/user/write",
     label: "Write",
-    description: "Submit a new revision",
+    description: "Submit a new edit",
     icon: FilePenLine,
   },
   {
     to: "/user/profile",
     label: "Profile",
-    description: "Your articles and revisions",
+    description: "Your articles and edits",
     icon: UserRound,
   },
   {
@@ -35,7 +35,7 @@ export default function UserSidebar() {
       <div className="user-brand">
         <p className="section-kicker">Reader Workspace</p>
         <h1>User Portal</h1>
-        <p>Discover articles, react to content, and submit revisions for review.</p>
+        <p>Discover articles, react to content, and submit edits tied to articles or events.</p>
       </div>
 
       <nav className="user-nav" aria-label="User navigation">

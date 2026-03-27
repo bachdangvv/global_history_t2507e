@@ -1,4 +1,4 @@
-import { Activity, FolderTree, Tags, Users } from "lucide-react";
+import { Activity, BellRing, BookOpen, Clock3, FolderTree, Landmark, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import AdminChart from "../../components/admin/AdminChart";
 import { adminApi } from "../../services/api";
@@ -41,31 +41,37 @@ export default function DashboardPage() {
       icon: Users,
       label: "Total users",
       value: overview.stats.totalUsers,
-      helper: "Accounts with admin visibility",
+      helper: "Contributors and admins in the workspace",
     },
     {
-      icon: Activity,
-      label: "Total articles",
+      icon: BookOpen,
+      label: "Articles",
       value: overview.stats.totalArticles,
-      helper: "Published, review, draft, and archived",
+      helper: "Article records in the knowledge base",
     },
     {
       icon: FolderTree,
-      label: "Categories",
-      value: overview.stats.totalCategories,
-      helper: "Editorial structure in use",
+      label: "Topics",
+      value: overview.stats.totalTopics,
+      helper: "Taxonomy nodes linked to articles and events",
     },
     {
-      icon: Tags,
-      label: "Tags",
-      value: overview.stats.totalTags,
-      helper: "Reusable labels across articles",
+      icon: Landmark,
+      label: "Historical events",
+      value: overview.stats.totalEvents,
+      helper: "Timeline records with current edit context",
+    },
+    {
+      icon: Clock3,
+      label: "Pending edits",
+      value: overview.stats.pendingEdits,
+      helper: "Items waiting for moderator review",
     },
     {
       icon: Activity,
       label: "Reactions",
       value: overview.stats.totalReactions,
-      helper: "Likes and dislikes combined",
+      helper: "Article likes and dislikes combined",
     },
   ];
 
@@ -74,10 +80,10 @@ export default function DashboardPage() {
       <section className="page-hero">
         <div>
           <p className="section-kicker">Admin Dashboard</p>
-          <h1>Overview</h1>
+          <h1>Schema overview</h1>
           <p>
-            A quick read on content volume, taxonomy structure, and where editorial attention is
-            currently concentrated.
+            A workspace view of articles, topics, events, edits, and contributor activity across the updated
+            knowledge model.
           </p>
         </div>
       </section>
@@ -91,16 +97,19 @@ export default function DashboardPage() {
       <section className="page-grid page-grid-two">
         <AdminChart
           type="line"
-          title="Monthly article activity"
-          description="How many articles were updated in the last six months."
+          title="Monthly content activity"
+          description="How many articles and edits were active in the last six months."
           data={overview.monthlyActivity}
           xKey="month"
-          series={[{ dataKey: "articles", label: "Articles" }]}
+          series={[
+            { dataKey: "articles", label: "Articles" },
+            { dataKey: "edits", label: "Edits" },
+          ]}
         />
         <AdminChart
           type="pie"
           title="Article status mix"
-          description="Distribution of current content states across the collection."
+          description="Distribution of current article states across the collection."
           data={overview.articleStatus}
           dataKey="value"
           nameKey="name"
@@ -110,9 +119,9 @@ export default function DashboardPage() {
       <section className="page-grid page-grid-two">
         <AdminChart
           type="bar"
-          title="Category distribution"
-          description="Article counts grouped by editorial category."
-          data={overview.categoryBreakdown}
+          title="Topic coverage"
+          description="How many article records are linked to each topic."
+          data={overview.topicBreakdown}
           xKey="name"
           series={[{ dataKey: "articles", label: "Articles" }]}
         />
@@ -120,9 +129,37 @@ export default function DashboardPage() {
         <section className="panel-card">
           <div className="panel-heading">
             <div>
-              <p className="section-kicker">Recent content</p>
-              <h2>Latest article updates</h2>
-              <p>The most recently touched records in the admin workspace.</p>
+              <p className="section-kicker">Pending queue</p>
+              <h2>Edits waiting for review</h2>
+              <p>The most recent pending edits across article and historical-event records.</p>
+            </div>
+          </div>
+
+          <div className="stack-list">
+            {overview.pendingEditQueue.map((edit) => (
+              <article key={edit.id} className="stack-row">
+                <div>
+                  <h3>{edit.title}</h3>
+                  <p>{edit.summary}</p>
+                </div>
+                <div className="stack-row-meta">
+                  <span className="status-badge status-badge-warning">{edit.editable_type}</span>
+                  <span className="status-badge status-badge-neutral">{edit.editorName}</span>
+                  <small>{formatDate(edit.created_at)}</small>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      </section>
+
+      <section className="page-grid page-grid-two">
+        <section className="panel-card">
+          <div className="panel-heading">
+            <div>
+              <p className="section-kicker">Recent articles</p>
+              <h2>Latest content updates</h2>
+              <p>Recently touched article records with linked topics and moderation pressure.</p>
             </div>
           </div>
 
@@ -134,11 +171,57 @@ export default function DashboardPage() {
                   <p>{article.summary}</p>
                 </div>
                 <div className="stack-row-meta">
-                  <span className="status-badge status-badge-neutral">{article.categoryName}</span>
+                  <span className="status-badge status-badge-neutral">{article.topicNames[0] || "No topic"}</span>
                   <span className="status-badge status-badge-accent">
-                    {article.status.toUpperCase()}
+                    {article.pendingEditCount} pending edits
                   </span>
-                  <small>{formatDate(article.updatedAt)}</small>
+                  <small>{formatDate(article.updated_at)}</small>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel-card">
+          <div className="panel-heading">
+            <div>
+              <p className="section-kicker">Activity feed</p>
+              <h2>Notifications and events</h2>
+              <p>Recent alerts in the contributor system and highlighted historical-event records.</p>
+            </div>
+          </div>
+
+          <div className="stack-list">
+            {overview.recentNotifications.map((notification) => (
+              <article key={notification.id} className="stack-row">
+                <div>
+                  <h3>{notification.title}</h3>
+                  <p>{notification.message}</p>
+                </div>
+                <div className="stack-row-meta">
+                  <span className={`status-badge ${notification.is_read ? "status-badge-neutral" : "status-badge-warning"}`}>
+                    {notification.related_type}
+                  </span>
+                  <span className="status-badge status-badge-neutral">
+                    <BellRing size={12} />
+                    {notification.actorName}
+                  </span>
+                  <small>{formatDate(notification.created_at)}</small>
+                </div>
+              </article>
+            ))}
+
+            {overview.eventHighlights.map((eventItem) => (
+              <article key={`event-${eventItem.id}`} className="stack-row">
+                <div>
+                  <h3>{eventItem.title}</h3>
+                  <p>{eventItem.summary}</p>
+                </div>
+                <div className="stack-row-meta">
+                  <span className="status-badge status-badge-accent">{eventItem.event_year}</span>
+                  <span className={`status-badge ${eventItem.currentEditStatus === "approved" ? "status-badge-success" : "status-badge-warning"}`}>
+                    {eventItem.currentEditStatus}
+                  </span>
                 </div>
               </article>
             ))}

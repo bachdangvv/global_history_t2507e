@@ -5,8 +5,12 @@ export default function ArticleCard({ article, showEdit = false }) {
   return (
     <article className="article-card">
       <div className="article-card-top">
-        <span className="status-badge status-badge-neutral">{article.categoryName}</span>
-        <span className="status-badge status-badge-accent">{article.country}</span>
+        <span className={`status-badge ${article.status === "published" ? "status-badge-success" : "status-badge-warning"}`}>
+          {article.status}
+        </span>
+        {article.topicNames?.[0] ? (
+          <span className="status-badge status-badge-neutral">{article.topicNames[0]}</span>
+        ) : null}
       </div>
 
       <div className="article-card-content">
@@ -14,11 +18,29 @@ export default function ArticleCard({ article, showEdit = false }) {
         <p>{article.summary}</p>
       </div>
 
+      {article.topicNames?.length ? (
+        <div className="article-chip-list">
+          {article.topicNames.map((topicName) => (
+            <span key={topicName} className="status-badge status-badge-accent">
+              {topicName}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
+      {article.linkedEvents?.length ? (
+        <div className="article-card-meta">
+          {article.linkedEvents.map((eventItem) => (
+            <span key={eventItem.id}>Event: {eventItem.title}</span>
+          ))}
+        </div>
+      ) : null}
+
       <div className="article-card-footer">
         <div className="article-card-meta">
           <span>{article.authorName}</span>
-          <span>{article.likes} likes</span>
-          <span>{article.dislikes} dislikes</span>
+          <span>{article.like_count} likes</span>
+          <span>{article.dislike_count} dislikes</span>
         </div>
 
         <div className="article-card-actions">

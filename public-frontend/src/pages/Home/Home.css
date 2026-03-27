@@ -7,7 +7,7 @@
 }
 
 /* Base styles for the main app background to ensure the whole page is creamy beige */
-:global(body) {
+body {
   background-color: var(--bg-color);
   margin: 0;
 }

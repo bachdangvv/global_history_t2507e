@@ -4,7 +4,10 @@ import UserSidebar from "./components/user/UserSidebar";
 import ArticlesPage from "./pages/admin/Articles";
 import CategoriesPage from "./pages/admin/Categories";
 import DashboardPage from "./pages/admin/Dashboard";
+import EditsPage from "./pages/admin/Edits";
+import EventsPage from "./pages/admin/Events";
 import TagsPage from "./pages/admin/Tags";
+import TopicsPage from "./pages/admin/Topics";
 import UsersPage from "./pages/admin/Users";
 import ArticleDetailPage from "./pages/user/ArticleDetail";
 import EditArticlePage from "./pages/user/EditArticle";
@@ -42,8 +45,11 @@ export default function App() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<DashboardPage />} />
         <Route path="articles" element={<ArticlesPage />} />
+        <Route path="edits" element={<EditsPage />} />
+        <Route path="topics" element={<TopicsPage />} />
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="tags" element={<TagsPage />} />
+        <Route path="events" element={<EventsPage />} />
         <Route path="users" element={<UsersPage />} />
       </Route>
       <Route path="/user" element={<UserLayout />}>
