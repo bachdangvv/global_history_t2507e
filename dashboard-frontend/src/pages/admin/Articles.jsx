@@ -6,6 +6,7 @@ import { adminApi } from "../../services/api";
 function formatDate(value) {
   return new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
+    timeStyle: "short",
   }).format(new Date(value));
 }
 
@@ -14,6 +15,7 @@ function getStatusTone(status) {
     case "published":
       return "status-badge-success";
     case "review":
+    case "pending":
       return "status-badge-warning";
     case "archived":
       return "status-badge-danger";
@@ -24,26 +26,26 @@ function getStatusTone(status) {
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [tags, setTags] = useState([]);
+  const [topics, setTopics] = useState([]);
+  const [events, setEvents] = useState([]);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [filters, setFilters] = useState({
     query: "",
-    categoryId: "all",
-    tagId: "all",
+    topicId: "all",
+    eventId: "all",
     status: "all",
   });
 
   async function loadPage() {
-    const [articleList, categoryList, tagList] = await Promise.all([
+    const [articleList, topicList, eventList] = await Promise.all([
       adminApi.getArticles(),
-      adminApi.getCategories(),
-      adminApi.getTags(),
+      adminApi.getTopics(),
+      adminApi.getEvents(),
     ]);
 
     setArticles(articleList);
-    setCategories(categoryList);
-    setTags(tagList);
+    setTopics(topicList);
+    setEvents(eventList);
     setSelectedArticle((current) =>
       articleList.find((article) => article.id === current?.id) || articleList[0] || null,
     );
@@ -65,14 +67,17 @@ export default function ArticlesPage() {
         !query ||
         article.title.toLowerCase().includes(query) ||
         article.summary.toLowerCase().includes(query);
-      const matchesCategory =
-        filters.categoryId === "all" || article.categoryId === filters.categoryId;
-      const matchesTag = filters.tagId === "all" || article.tagIds.includes(filters.tagId);
+      const matchesTopic =
+        filters.topicId === "all" ||
+        article.topicNames.some((topicName) => topics.find((topic) => String(topic.id) === filters.topicId)?.name === topicName);
+      const matchesEvent =
+        filters.eventId === "all" ||
+        article.linkedEvents.some((eventItem) => String(eventItem.id) === filters.eventId);
       const matchesStatus = filters.status === "all" || article.status === filters.status;
 
-      return matchesQuery && matchesCategory && matchesTag && matchesStatus;
+      return matchesQuery && matchesTopic && matchesEvent && matchesStatus;
     });
-  }, [articles, filters]);
+  }, [articles, filters, topics]);
 
   const columns = [
     {
@@ -86,14 +91,17 @@ export default function ArticlesPage() {
       ),
     },
     {
-      key: "category",
-      header: "Category",
-      render: (article) => article.categoryName,
+      key: "topics",
+      header: "Topics",
+      render: (article) => article.topicNames.join(", ") || "No topics",
     },
     {
-      key: "tags",
-      header: "Tags",
-      render: (article) => article.tagNames.join(", ") || "No tags",
+      key: "events",
+      header: "Events",
+      render: (article) =>
+        article.linkedEvents.length
+          ? article.linkedEvents.map((eventItem) => eventItem.title).join(", ")
+          : "No linked events",
     },
     {
       key: "status",
@@ -103,14 +111,14 @@ export default function ArticlesPage() {
       ),
     },
     {
-      key: "reactions",
-      header: "Reactions",
-      render: (article) => article.reactionTotal,
+      key: "edits",
+      header: "Pending edits",
+      render: (article) => article.pendingEditCount,
     },
     {
-      key: "updatedAt",
+      key: "updated_at",
       header: "Updated",
-      render: (article) => formatDate(article.updatedAt),
+      render: (article) => formatDate(article.updated_at),
     },
     {
       key: "actions",
@@ -144,7 +152,7 @@ export default function ArticlesPage() {
         <div>
           <p className="section-kicker">Articles management</p>
           <h1>Articles</h1>
-          <p>Search the article library, inspect details, and remove entries when necessary.</p>
+          <p>Inspect article records together with linked topics, historical events, and current edit status.</p>
         </div>
       </section>
 
@@ -164,29 +172,29 @@ export default function ArticlesPage() {
 
           <div className="toolbar-group">
             <select
-              value={filters.categoryId}
+              value={filters.topicId}
               onChange={(event) =>
-                setFilters((current) => ({ ...current, categoryId: event.target.value }))
+                setFilters((current) => ({ ...current, topicId: event.target.value }))
               }
             >
-              <option value="all">All categories</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
+              <option value="all">All topics</option>
+              {topics.map((topic) => (
+                <option key={topic.id} value={topic.id}>
+                  {topic.name}
                 </option>
               ))}
             </select>
 
             <select
-              value={filters.tagId}
+              value={filters.eventId}
               onChange={(event) =>
-                setFilters((current) => ({ ...current, tagId: event.target.value }))
+                setFilters((current) => ({ ...current, eventId: event.target.value }))
               }
             >
-              <option value="all">All tags</option>
-              {tags.map((tag) => (
-                <option key={tag.id} value={tag.id}>
-                  {tag.name}
+              <option value="all">All events</option>
+              {events.map((eventItem) => (
+                <option key={eventItem.id} value={eventItem.id}>
+                  {eventItem.title}
                 </option>
               ))}
             </select>
@@ -234,24 +242,28 @@ export default function ArticlesPage() {
               <p>{selectedArticle.summary}</p>
             </div>
             <div className="detail-card">
-              <span className="detail-label">Category</span>
-              <p>{selectedArticle.categoryName}</p>
-            </div>
-            <div className="detail-card">
-              <span className="detail-label">Tags</span>
-              <p>{selectedArticle.tagNames.join(", ") || "No tags assigned"}</p>
-            </div>
-            <div className="detail-card">
               <span className="detail-label">Author</span>
               <p>{selectedArticle.authorName}</p>
             </div>
             <div className="detail-card">
-              <span className="detail-label">Country</span>
-              <p>{selectedArticle.country}</p>
+              <span className="detail-label">Topics</span>
+              <p>{selectedArticle.topicNames.join(", ") || "No topics assigned"}</p>
             </div>
             <div className="detail-card">
-              <span className="detail-label">Last updated</span>
-              <p>{formatDate(selectedArticle.updatedAt)}</p>
+              <span className="detail-label">Linked events</span>
+              <p>
+                {selectedArticle.linkedEvents.length
+                  ? selectedArticle.linkedEvents.map((eventItem) => eventItem.title).join(", ")
+                  : "No linked events"}
+              </p>
+            </div>
+            <div className="detail-card">
+              <span className="detail-label">Current edit</span>
+              <p>{selectedArticle.currentEdit ? selectedArticle.currentEdit.summary : "No current edit record"}</p>
+            </div>
+            <div className="detail-card">
+              <span className="detail-label">Reactions</span>
+              <p>{selectedArticle.like_count + selectedArticle.dislike_count} total reactions</p>
             </div>
             <div className="detail-card detail-card-wide">
               <span className="detail-label">Content preview</span>
