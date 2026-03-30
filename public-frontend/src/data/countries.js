@@ -10,5 +10,6 @@ export const countries = [
   { id: 9, name: 'Nhật Bản', code: 'JP', flag: '🇯🇵' },
   { id: 10, name: 'Ấn Độ', code: 'IN', flag: '🇮🇳' },
   { id: 11, name: 'Campuchia', code: 'KH', flag: '🇰🇭' },
-  { id: 12, name: 'Mông Cổ', code: 'MN', flag: '🇲🇳' }
+  { id: 12, name: 'Mông Cổ', code: 'MN', flag: '🇲🇳' },
+  { id: 13, name: 'Hoa Kỳ (USA)', code: 'US', flag: '🇺🇸' }
 ];
