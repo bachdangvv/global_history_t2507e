@@ -23,7 +23,7 @@
   height: 30px;
   border-radius: 50%;
   z-index: 2;
-  background: white;
+  background: var(--bg-color);
 }
 
 .timeline-line {
@@ -33,7 +33,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 2px;
-  background-color: #2e5339; /* Dark green line to match mockup */
+  background-color: var(--success-green); /* Dark green line to match mockup */
   z-index: 1;
 }
 
@@ -49,19 +49,19 @@
 
 .timeline-author {
   font-weight: bold;
-  color: #333;
+  color: var(--text-heading);
 }
 
 .timeline-action {
-  color: #666;
+  color: var(--text-main);
 }
 
 .timeline-title {
-  color: #2e5339; /* Dark green for modified content names */
+  color: var(--success-green); /* Dark green for modified content names */
 }
 
 .timeline-time {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--text-main);
   margin-top: 2px;
 }

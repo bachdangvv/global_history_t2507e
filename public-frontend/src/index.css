@@ -3,12 +3,26 @@
    ========================================= */
 :root {
   /* Color Palette - Classic & Deep */
-  --bg-color: #f8fafc;        /* Very light gray/blue background */
-  --text-main: #334155;       /* Slate gray for main text */
-  --text-heading: #0f172a;    /* Dark navy for headings */
-  --primary-accent: #3b82f6;  /* Blue accent for links/buttons */
-  --primary-hover: #2563eb;
-  --footer-bg: #1a1a1a;
+  /* Main Background & Structure */
+  --bg-color: #f7f4ea;       /* A warm, paper-like cream/ivory color */
+  --header-footer-bg: #2c2c2c; /* The dark charcoal used for the Navbar and Footer */
+  
+  /* Typography */
+  --text-main: #424242;      /* A softer dark gray for comfortable reading on cream */
+  --text-heading: #111111;   /* Near-black for sharp, authoritative headings */
+  
+  /* Buttons & Interactions (Replacing the bright blue) */
+  --primary-accent: #2c2c2c; /* Uses the dark header color for primary buttons (like 'Login') */
+  --primary-hover: #404040;  /* Slightly lighter charcoal for button hover states */
+  
+  /* UI Elements (Extracted directly from your image) */
+  --border-light: #e0dcd0;   /* Subtle borders for the cards and search bar */
+  --success-green: #28a745;  /* The bold green used for the upvote arrow and 'ĐÃ KIỂM DUYỆT' badge */
+  --success-red: #dc3545;
+  
+  /* Diff Viewer Colors (For the Top Upvote Revision block) */
+  --diff-add-bg: #e6ffed;    /* Light green background for [+] rows */
+  --diff-remove-bg: #ffeef0; /* Light pink/red background for [-] rows */
   
   /* Fonts */
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -29,8 +43,13 @@ html {
 }
 
 html, body {
-  height: 100%; /* Crucial for the sticky footer layout */
+  height: auto;
+  min-height: 100%;
   width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   font-family: var(--font-body);
   background-color: #0a0a0a;
   color: var(--text-main);

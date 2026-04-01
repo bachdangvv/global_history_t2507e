@@ -1,121 +1,66 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import AdminSidebar from "./components/admin/AdminSidebar";
+import UserSidebar from "./components/user/UserSidebar";
+import ArticlesPage from "./pages/admin/Articles";
+import CategoriesPage from "./pages/admin/Categories";
+import DashboardPage from "./pages/admin/Dashboard";
+import EditsPage from "./pages/admin/Edits";
+import EventsPage from "./pages/admin/Events";
+import TagsPage from "./pages/admin/Tags";
+import TopicsPage from "./pages/admin/Topics";
+import UsersPage from "./pages/admin/Users";
+import ArticleDetailPage from "./pages/user/ArticleDetail";
+import EditArticlePage from "./pages/user/EditArticle";
+import HomePage from "./pages/user/Home";
+import NotificationsPage from "./pages/user/Notifications";
+import ProfilePage from "./pages/user/Profile";
+import WriteArticlePage from "./pages/user/WriteArticle";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function AdminLayout() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    <div className="app-frame">
+      <AdminSidebar />
+      <main className="admin-content">
+        <Outlet />
+      </main>
+    </div>
+  );
 }
 
-export default App
+function UserLayout() {
+  return (
+    <div className="app-frame user-frame">
+      <UserSidebar />
+      <main className="admin-content">
+        <Outlet />
+      </main>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/admin" replace />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<DashboardPage />} />
+        <Route path="articles" element={<ArticlesPage />} />
+        <Route path="edits" element={<EditsPage />} />
+        <Route path="topics" element={<TopicsPage />} />
+        <Route path="categories" element={<CategoriesPage />} />
+        <Route path="tags" element={<TagsPage />} />
+        <Route path="events" element={<EventsPage />} />
+        <Route path="users" element={<UsersPage />} />
+      </Route>
+      <Route path="/user" element={<UserLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="articles/:id" element={<ArticleDetailPage />} />
+        <Route path="articles/:id/edit" element={<EditArticlePage />} />
+        <Route path="write" element={<WriteArticlePage />} />
+        <Route path="profile" element={<ProfilePage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/admin" replace />} />
+    </Routes>
+  );
+}

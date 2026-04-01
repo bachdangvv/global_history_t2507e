@@ -11,7 +11,7 @@ const TopArticle = ({ data }) => {
   return (
     <div className="widget-container">
       <div className="widget-header">
-        <h3>Top Like Article</h3>
+        <h3>Bài viết được yêu thích</h3>
         <span className="subtitle-vi">Xem thêm</span>
       </div>
       
@@ -30,8 +30,8 @@ const TopArticle = ({ data }) => {
                 ></div>
               </div>
               <div className="vote-stats">
-                <span className="voter-ratio-label">Voter ratio</span>
-                <span className="like-dislike-label">Like:Dislike</span>
+                <span className="voter-ratio-label">Tỉ lệ yêu thích</span>
+                <span className="like-dislike-label">Thích:Không thích</span>
               </div>
             </div>
           </div>

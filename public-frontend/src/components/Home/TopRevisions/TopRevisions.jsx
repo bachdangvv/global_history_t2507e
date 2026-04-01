@@ -7,7 +7,7 @@ const TopRevisions = ({ data }) => {
   return (
     <div className="widget-container">
       <div className="widget-header">
-        <h3>Top Upvote Edit</h3>
+        <h3>Chỉnh sửa được yêu thích</h3>
         <span className="subtitle-vi">Xem thêm</span>
       </div>
       

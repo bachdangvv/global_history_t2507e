@@ -18,12 +18,12 @@
 
 .category-icon {
   font-size: 1.1rem;
-  color: #555;
+  color: var(--text-main);
   width: 20px;
   text-align: center;
 }
 
 .category-name {
   font-size: 0.9rem;
-  color: #333;
+  color: var(--text-heading);
 }
