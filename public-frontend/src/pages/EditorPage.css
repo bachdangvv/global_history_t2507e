@@ -1,0 +1,131 @@
+/* =========================================
+   ARTICLE EDITOR PAGE LAYOUT
+   Used by CreateArticlePage & EditArticlePage
+   ========================================= */
+
+.editor-page-wrapper {
+  display: flex;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: var(--bg-color);
+}
+
+/* Sidebar column — hidden by default, toggled via hamburger */
+.editor-sidebar-col {
+  width: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: width var(--transition-speed) ease;
+}
+
+.editor-page-wrapper.sidebar-open .editor-sidebar-col {
+  width: var(--sidebar-width);
+}
+
+/* Main editor area — takes full remaining space */
+.editor-main {
+  flex: 1;
+  min-width: 0;
+  padding: 40px 48px 60px 48px;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* --- Page Header --- */
+.editor-page-header {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1.5px solid var(--border-light);
+}
+
+.editor-page-title {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+}
+
+.editor-page-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-main);
+  opacity: 0.7;
+}
+
+/* --- Loading State --- */
+.editor-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+  color: var(--text-main);
+}
+
+.editor-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-light);
+  border-top-color: var(--primary-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.editor-loading-text {
+  font-size: 0.95rem;
+  opacity: 0.7;
+}
+
+/* --- Error State --- */
+.editor-error {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--success-red);
+  font-size: 0.95rem;
+}
+
+/* --- Edit Badge --- */
+.editor-edit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: rgba(44, 44, 44, 0.06);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  color: var(--text-main);
+  margin-bottom: 20px;
+}
+
+.editor-edit-badge strong {
+  color: var(--text-heading);
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .editor-page-wrapper.sidebar-open .editor-sidebar-col,
+  .editor-sidebar-col {
+    width: 0;
+    overflow: visible;
+  }
+
+  .editor-main {
+    padding: 24px 16px 40px 16px;
+  }
+
+  .editor-page-title {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .editor-main {
+    padding: 16px 12px 32px 12px;
+  }
+
+  .editor-page-header {
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+  }
+}

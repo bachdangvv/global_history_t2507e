@@ -6,22 +6,16 @@
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Takes up at least 100% of the viewport height */
-  position: relative;
+  min-height: 100vh;
   width: 100%;
 }
 
-/* The flex: 1 property forces the main content area to grow 
-  and take up all available space, pushing the footer down.
-*/
+/* Simplified: removed nested flex to prevent mobile scroll locking.
+   Block element that grows naturally with its content. */
 .main-content {
   flex: 1 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   width: 100%;
   background-color: var(--bg-color);
-  /* Optional: Add a subtle fade-in animation for page loads */
   animation: fadeIn 0.5s ease-in-out;
 }
 

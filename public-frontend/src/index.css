@@ -11,6 +11,10 @@
   --text-main: #424242;      /* A softer dark gray for comfortable reading on cream */
   --text-heading: #111111;   /* Near-black for sharp, authoritative headings */
   
+  /* Layout Variables */
+  --sidebar-width: 250px;
+  --transition-speed: 0.3s;
+  
   /* Buttons & Interactions (Replacing the bright blue) */
   --primary-accent: #2c2c2c; /* Uses the dark header color for primary buttons (like 'Login') */
   --primary-hover: #404040;  /* Slightly lighter charcoal for button hover states */
@@ -38,13 +42,14 @@
   padding: 0;
 }
 
-html, body {
-  height: auto;
-  min-height: 100%;
-  width: 100%;
+html {
+  /* Let browser handle height naturally */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
   margin: 0;
   padding: 0;
-  overflow-y: auto;
   overflow-x: hidden;
   font-family: var(--font-body);
   background-color: var(--bg-color);
@@ -52,6 +57,8 @@ html, body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Ensure mobile can scroll naturally */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Base Typography */

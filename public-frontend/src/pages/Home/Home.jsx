@@ -2,30 +2,42 @@ import React from 'react';
 import './Home.css';
 import { mockData } from '../../mockData';
 
-import SearchBar from '../../components/Home/SearchBar/SearchBar';
 import TopRevisions from '../../components/Home/TopRevisions/TopRevisions';
 import TopArticle from '../../components/Home/TopArticle/TopArticle';
-import CountryList from '../../components/Home/CountryList/CountryList';
-import CategoryList from '../../components/Home/CategoryList/CategoryList';
-import RecentRevisions from '../../components/Home/RecentRevisions/RecentRevisions';
-import RecentArticles from '../../components/Home/RecentArticles/RecentArticles';
+import Sidebar from '../../components/Home/Sidebar/Sidebar';
+import HistoryEvents from '../../components/Home/HistoryEvents/HistoryEvents';
 
-const Home = () => {
+const Home = ({ sidebarOpen }) => {
   return (
-    <div className="home-container">
-      <SearchBar />
-      
-      <div className="home-grid">
-        <div className="home-grid-left">
-          <TopRevisions data={mockData.topUpvoteRevision} />
-          <CountryList data={mockData.countries} />
-          <RecentRevisions data={mockData.recentRevisions} />
+    <div className={`home-wrapper ${sidebarOpen ? 'sidebar-open' : ''}`}>
+      {/* Sidebar — always rendered, grid column on desktop, overlay on mobile */}
+      <aside className="home-sidebar-col">
+        <Sidebar data={mockData.categories} sidebarOpen={sidebarOpen} />
+      </aside>
+
+      {/* Main grid content */}
+      <div className="home-layout">
+        {/* Topbar */}
+        <div className="home-area-topbar">
+          <TopRevisions 
+            topUpvoteData={mockData.topUpvoteRevisions} 
+            recentData={mockData.recentRevisionsDiffs} 
+          />
         </div>
         
-        <div className="home-grid-right">
-          <TopArticle data={mockData.topLikeArticle} />
-          <CategoryList data={mockData.categories} />
-          <RecentArticles data={mockData.recentArticles} />
+        {/* Articles (Left Main) */}
+        <div className="home-area-articles">
+          <TopArticle 
+            topLikeData={mockData.topLikeArticles} 
+            topViewData={mockData.topViewArticles}
+            recentData={mockData.recentArticles}
+            countries={mockData.countries}
+          />
+        </div>
+        
+        {/* Events (Right Main) */}
+        <div className="home-area-events">
+          <HistoryEvents data={mockData.historicalEvents} />
         </div>
       </div>
     </div>

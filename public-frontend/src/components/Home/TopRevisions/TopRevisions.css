@@ -2,23 +2,90 @@
   margin-bottom: 30px;
 }
 
-.widget-header {
+.section-header-with-sort {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-light);
 }
 
-.widget-header h3 {
+.sort-tabs {
+  display: flex;
+  gap: 20px;
+}
+
+.sort-tab {
+  background: transparent;
+  border: none;
   font-family: var(--font-heading);
-  font-size: 1.5rem;
-  color: var(--text-heading);
-  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 10px 0;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.subtitle-vi {
-  font-size: 0.9rem;
-  color: var(--text-main);
+.sort-tab:hover {
+  color: var(--text-heading);
+}
+
+.sort-tab.active {
+  color: var(--text-heading);
+  border-bottom-color: var(--text-heading);
+}
+
+.revisions-slider-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.revisions-slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 10px; /* Space for scrollbar if visible */
+  scrollbar-width: none; /* Firefox */
+}
+.revisions-slider::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(44, 44, 44, 0.85);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  font-size: 1.2rem;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.slider-arrow:hover {
+  background: rgba(44, 44, 44, 1);
+}
+
+.overlay-left {
+  left: -20px;
+}
+
+.overlay-right {
+  right: -20px;
 }
 
 .diff-card {
@@ -27,6 +94,10 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  flex: 0 0 calc(33.333% - 14px); /* Show exactly 3 items */
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
 }
 
 .diff-content {
@@ -35,6 +106,7 @@
   padding: 10px 0;
   border-bottom: 1px solid var(--border-light);
   overflow-x: auto;
+  height: 180px; /* Give it a fixed height for uniform cards */
 }
 
 .diff-line {
@@ -59,7 +131,8 @@
 
 .diff-text {
   color: var(--text-heading);
-  white-space: pre;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .diff-footer {
@@ -68,6 +141,8 @@
   align-items: center;
   padding: 10px 15px;
   background-color: var(--bg-color);
+  flex-shrink: 0;
+  height: 60px; /* Force consistent footer height */
 }
 
 .author-info {
@@ -97,12 +172,55 @@
 }
 
 .author-name {
+  font-size: 0.85rem;
+  color: var(--text-main);
+}
+
+.author-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.diff-article-title {
   font-size: 0.95rem;
   color: var(--text-heading);
+  font-weight: 600;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .status-badge {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--success-green);
   font-weight: bold;
+  white-space: nowrap;
+}
+
+/* Responsiveness for Slider */
+@media (max-width: 1200px) {
+  .diff-card {
+    flex: 0 0 calc(50% - 10px); /* 2 items */
+  }
+}
+
+@media (max-width: 768px) {
+  .diff-card {
+    flex: 0 0 85%; /* 1 item with peek of next */
+  }
+  .slider-arrow {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  .overlay-left {
+    left: 5px;
+  }
+  .overlay-right {
+    right: 5px;
+  }
 }
