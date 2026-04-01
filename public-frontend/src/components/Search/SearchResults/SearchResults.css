@@ -2,7 +2,7 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 60px 20px;
-  background-color: #f7f4ea;
+  background-color: var(--bg-color);
 }
 
 .results-header {

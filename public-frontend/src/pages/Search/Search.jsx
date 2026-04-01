@@ -43,7 +43,7 @@ const Search = () => {
   return (
     <div className="search-page">
       <SearchBarMain onSearch={handleSearch} />
-      
+
       {hasSearched ? (
         <SearchResults results={results} isLoading={isLoading} />
       ) : (

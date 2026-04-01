@@ -1,6 +1,6 @@
 .top-results-container {
   width: 100%;
-  background-color: #f7f4ea;
+  background-color: var(--bg-color);
   padding: 60px 20px;
 }
 
@@ -11,7 +11,7 @@
 
 .section-title {
   font-size: 2.5rem;
-  color: black !important;
+  color: black;
   margin-bottom: 40px;
   font-weight: 700;
   text-align: center;
@@ -88,6 +88,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

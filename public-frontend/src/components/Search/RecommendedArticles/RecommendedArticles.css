@@ -1,6 +1,6 @@
 .recommended-articles-container {
   width: 100%;
-  background-color: #f7f4ea;
+  background-color: var(--bg-color);
   padding: 60px 20px;
   border-top: 1px solid rgba(231, 76, 60, 0.2);
 }
@@ -19,7 +19,7 @@
 
 .section-subtitle {
   font-size: 1.1rem;
-  color: #a8a8a8;
+  color: black;
   margin-bottom: 40px;
   line-height: 1.6;
 }

@@ -7,7 +7,6 @@
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: 1px solid #333;
-  cursor: pointer;
 }
 
 .search-result-card:hover {
@@ -42,7 +41,7 @@
   margin: 0 0 12px 0;
   font-size: 1.3rem;
   font-weight: 600;
-  color: #f7f4ea;
+  color: black;
   font-family: var(--font-heading);
   line-height: 1.3;
 }

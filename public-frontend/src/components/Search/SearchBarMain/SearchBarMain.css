@@ -1,5 +1,5 @@
 .search-bar-main-wrapper {
-  background: transparent;
+  background: var(--bg-color);
   padding: 20px;
   border-bottom: none;
 }
@@ -48,7 +48,7 @@
   background-color: #e74c3c;
   color: white;
   border: none;
-  border-radius: 20px;
+  border-radius: 6px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
