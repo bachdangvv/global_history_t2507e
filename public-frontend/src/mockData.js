@@ -83,7 +83,7 @@ export const searchArticles = [
     likes: 2340,
     comments: 156,
     views: 12500,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Amazon_Rainforest_at_the_Yasuni_National_Park.jpg/800px-Amazon_Rainforest_at_the_Yasuni_National_Park.jpg',
+    image: 'https://thumbs.dreamstime.com/b/ancient-amazon-civilization-buildings-groups-people-scene-features-impressive-stone-wood-structures-intricate-329570180.jpg',
   },
   {
     id: 2,
@@ -94,7 +94,7 @@ export const searchArticles = [
     likes: 5678,
     comments: 423,
     views: 28900,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/The_Great_Sphinx_of_Giza_-_Project_Gutenberg_eBook_16452.jpg/800px-The_Great_Sphinx_of_Giza_-_Project_Gutenberg_eBook_16452.jpg',
+    image: 'https://www.egypttoursportal.com/images/2024/04/Kom-Ombo-Tempel-Design-Ancient-Egyptian-Architecture-Egypt-Tours-Portal.jpg',
   },
   {
     id: 3,
@@ -105,7 +105,7 @@ export const searchArticles = [
     likes: 3420,
     comments: 287,
     views: 18700,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/GreeceBust.jpg/800px-GreeceBust.jpg',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.2u5BsB4I-VkkLgORSufJOQHaEK?rs=1&pid=ImgDetMain&o=7&rm=3',
   },
   {
     id: 4,
@@ -116,7 +116,7 @@ export const searchArticles = [
     likes: 2890,
     comments: 201,
     views: 15600,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Codex_Mendoza_folio_2r.jpg/800px-Codex_Mendoza_folio_2r.jpg',
+    image: 'https://tse2.mm.bing.net/th/id/OIP.PdB9yjPSunPOlmpjwYD4qAHaEK?rs=1&pid=ImgDetMain&o=7&rm=3',
   },
   {
     id: 5,
@@ -127,7 +127,7 @@ export const searchArticles = [
     likes: 1950,
     comments: 142,
     views: 9800,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Hagia_sophia_recent.jpg/800px-Hagia_sophia_recent.jpg',
+    image: 'https://th.bing.com/th/id/R.79608d79d096eeb61b5ec5729b3b0af3?rik=sDGBBUAcQguB3w&riu=http%3a%2f%2fbrewminate.com%2fwp-content%2fuploads%2f2017%2f01%2fByzantineEmpire02.jpg&ehk=nPFAujnnfgM4T%2fs9DZONubfMppo2TENF6YXQR4EIxeE%3d&risl=&pid=ImgRaw&r=0',
   },
   {
     id: 6,

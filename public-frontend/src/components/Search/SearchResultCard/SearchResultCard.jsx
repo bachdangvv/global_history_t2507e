@@ -1,9 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './SearchResultCard.css';
 
 const SearchResultCard = ({ result }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/article/${result.id}`);
+  };
+
   return (
-    <div className="search-result-card">
+    <div className="search-result-card" onClick={handleClick}>
       <div className="result-image-container">
         <img src={result.image} alt={result.title} className="result-image" />
       </div>

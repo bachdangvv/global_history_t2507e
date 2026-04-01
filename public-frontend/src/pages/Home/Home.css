@@ -1,7 +1,6 @@
 .home-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
   background-color: #f7f4ea; /* Creamy beige from mockup */
   min-height: calc(100vh - 60px - 70px); /* Adjust based on navbar/footer height */
 }

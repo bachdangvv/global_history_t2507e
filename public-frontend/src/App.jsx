@@ -4,6 +4,7 @@ import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import Home from './pages/Home/Home';
 import Search from './pages/Search/Search';
+import ArticleDetail from './pages/ArticleDetail/ArticleDetail';
 // import Articles from './pages/Articles';
 // import ArticleDetail from './pages/ArticleDetail';
 // import Categories from './pages/Categories';
@@ -23,6 +24,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/search" element={<Search />} />
+              <Route path="/article/:id" element={<ArticleDetail />} />
               {/* <Route path="/articles" element={<Articles />} />
               <Route path="/articles/:id" element={<ArticleDetail />} />
               <Route path="/categories" element={<Categories />} />
