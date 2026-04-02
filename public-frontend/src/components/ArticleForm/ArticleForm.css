@@ -1,0 +1,193 @@
+/* =========================================
+   ARTICLE FORM STYLES
+   ========================================= */
+
+.article-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* --- Form Group --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-main);
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-heading);
+  background-color: #fff;
+  border: 1.5px solid var(--border-light);
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #aaa;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 3px rgba(44, 44, 44, 0.08);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+/* --- Input with error state --- */
+.form-input.input-error,
+.form-textarea.input-error {
+  border-color: var(--success-red);
+}
+
+.form-input.input-error:focus,
+.form-textarea.input-error:focus {
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* --- Error Message --- */
+.field-error {
+  font-size: 0.8rem;
+  color: var(--success-red);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* --- Character Counter --- */
+.char-counter {
+  font-size: 0.75rem;
+  color: #999;
+  text-align: right;
+  margin-top: -2px;
+}
+
+/* --- React Quill Overrides --- */
+.quill-wrapper {
+  position: relative;
+}
+
+.quill-wrapper .ql-toolbar {
+  border: 1.5px solid var(--border-light);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background-color: #faf9f5;
+  font-family: var(--font-body);
+}
+
+.quill-wrapper .ql-container {
+  border: 1.5px solid var(--border-light);
+  border-radius: 0 0 8px 8px;
+  background-color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-heading);
+  min-height: 280px;
+}
+
+.quill-wrapper .ql-editor {
+  min-height: 280px;
+  line-height: 1.7;
+  padding: 16px;
+}
+
+.quill-wrapper .ql-editor.ql-blank::before {
+  color: #aaa;
+  font-style: normal;
+}
+
+.quill-wrapper.quill-error .ql-toolbar {
+  border-color: var(--success-red);
+}
+
+.quill-wrapper.quill-error .ql-container {
+  border-color: var(--success-red);
+}
+
+/* --- Submit Button --- */
+.form-submit-btn {
+  align-self: flex-start;
+  padding: 12px 36px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--bg-color);
+  background-color: var(--primary-accent);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  letter-spacing: 0.3px;
+}
+
+.form-submit-btn:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  box-shadow: 0 4px 12px rgba(44, 44, 44, 0.2);
+  transform: translateY(-1px);
+}
+
+.form-submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.form-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- Loading spinner for button --- */
+.btn-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(247, 244, 234, 0.3);
+  border-top-color: var(--bg-color);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+  .form-submit-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .quill-wrapper .ql-container,
+  .quill-wrapper .ql-editor {
+    min-height: 200px;
+  }
+}

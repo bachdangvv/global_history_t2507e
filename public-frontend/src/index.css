@@ -4,29 +4,44 @@
 :root {
   /* Color Palette - Classic & Deep */
   /* Main Background & Structure */
-  --bg-color: #f7f4ea;       /* A warm, paper-like cream/ivory color */
-  --header-footer-bg: #2c2c2c; /* The dark charcoal used for the Navbar and Footer */
-  
+  --bg-color: #f7f4ea;
+  /* A warm, paper-like cream/ivory color */
+  --header-footer-bg: #2c2c2c;
+  /* The dark charcoal used for the Navbar and Footer */
+
   /* Typography */
-  --text-main: #424242;      /* A softer dark gray for comfortable reading on cream */
-  --text-heading: #111111;   /* Near-black for sharp, authoritative headings */
-  
+  --text-main: #424242;
+  /* A softer dark gray for comfortable reading on cream */
+  --text-heading: #111111;
+  /* Near-black for sharp, authoritative headings */
+
+  /* Layout Variables */
+  --sidebar-width: 250px;
+  --transition-speed: 0.3s;
+
   /* Buttons & Interactions (Replacing the bright blue) */
-  --primary-accent: #2c2c2c; /* Uses the dark header color for primary buttons (like 'Login') */
-  --primary-hover: #404040;  /* Slightly lighter charcoal for button hover states */
-  
+  --primary-accent: #2c2c2c;
+  /* Uses the dark header color for primary buttons (like 'Login') */
+  --primary-hover: #404040;
+  /* Slightly lighter charcoal for button hover states */
+
   /* UI Elements (Extracted directly from your image) */
-  --border-light: #e0dcd0;   /* Subtle borders for the cards and search bar */
-  --success-green: #28a745;  /* The bold green used for the upvote arrow and 'ĐÃ KIỂM DUYỆT' badge */
+  --border-light: #e0dcd0;
+  /* Subtle borders for the cards and search bar */
+  --success-green: #28a745;
+  /* The bold green used for the upvote arrow and 'ĐÃ KIỂM DUYỆT' badge */
   --success-red: #dc3545;
-  
+
   /* Diff Viewer Colors (For the Top Upvote Revision block) */
-  --diff-add-bg: #e6ffed;    /* Light green background for [+] rows */
-  --diff-remove-bg: #ffeef0; /* Light pink/red background for [-] rows */
-  
+  --diff-add-bg: #e6ffed;
+  /* Light green background for [+] rows */
+  --diff-remove-bg: #ffeef0;
+  /* Light pink/red background for [-] rows */
+
   /* Fonts */
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-heading: 'Merriweather', 'Georgia', serif; /* A classic serif for a history site */
+  --font-heading: 'Merriweather', 'Georgia', serif;
+  /* A classic serif for a history site */
 }
 
 /* =========================================
@@ -39,16 +54,13 @@
 }
 
 html {
-  scrollbar-gutter: stable;
+  /* Let browser handle height naturally */
+  -webkit-text-size-adjust: 100%;
 }
 
-html, body {
-  height: auto;
-  min-height: 100%;
-  width: 100%;
+body {
   margin: 0;
   padding: 0;
-  overflow-y: auto;
   overflow-x: hidden;
   font-family: var(--font-body);
   background-color: #0a0a0a;
@@ -56,10 +68,17 @@ html, body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Ensure mobile can scroll naturally */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Base Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   color: var(--text-heading);
   margin-bottom: 0.5em;

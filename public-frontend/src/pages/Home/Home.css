@@ -1,33 +1,99 @@
-.home-container {
-  max-width: 1200px;
+/* Outer wrapper: flexbox with sidebar column + main grid */
+.home-wrapper {
+  display: flex;
+  max-width: 1400px;
+  width: 100%;
   margin: 0 auto;
-  padding: 40px 20px;
   background-color: var(--bg-color);
-  min-height: calc(100vh - 60px - 70px); /* Adjust based on navbar/footer height */
 }
 
+<<<<<<< HEAD
 /* Base styles for the main app background to ensure the whole page is creamy beige */
 body {
   background-color: var(--bg-color);
   margin: 0;
+=======
+/* Sidebar column — normal flow, scrolls with page */
+.home-sidebar-col {
+  width: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: width var(--transition-speed) ease;
+>>>>>>> 3c2e94342eb257e5967cddf5f812606655ca5877
 }
 
-.home-grid {
+.home-wrapper.sidebar-open .home-sidebar-col {
+  width: var(--sidebar-width);
+}
+
+/* Main grid content */
+.home-layout {
+  flex: 1;
+  min-width: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 40px;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "topbar topbar"
+    "articles events";
+  gap: 20px 30px;
+  padding: 0 20px 40px 20px;
 }
 
-@media (min-width: 900px) {
-  .home-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 60px;
+.home-area-topbar {
+  grid-area: topbar;
+  margin-top: 30px;
+  min-width: 0;
+}
+
+.home-area-articles {
+  grid-area: articles;
+  min-width: 0;
+}
+
+.home-area-events {
+  grid-area: events;
+  min-width: 0;
+}
+
+/* Tablet */
+@media (max-width: 1100px) {
+  .home-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "topbar"
+      "articles"
+      "events";
   }
 }
 
+<<<<<<< HEAD
 .home-grid-left,
 .home-grid-right {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
+=======
+/* Mobile */
+@media (max-width: 900px) {
+  .home-wrapper.sidebar-open .home-sidebar-col,
+  .home-sidebar-col {
+    width: 0; /* Collapse but don't remove — sidebar inside uses position:fixed */
+    overflow: visible; /* Allow fixed-positioned sidebar to escape */
+  }
+
+  .home-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "topbar"
+      "articles"
+      "events";
+    padding: 15px 15px 60px 15px;
+  }
+
+  .home-area-topbar {
+    margin-top: 10px;
+  }
+}
+>>>>>>> 3c2e94342eb257e5967cddf5f812606655ca5877

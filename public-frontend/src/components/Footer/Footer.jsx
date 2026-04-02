@@ -5,9 +5,9 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-links">
-        <a href="/links">Về chúng tôi</a>
-        <a href="/privacy">Chính sách</a>
-        <a href="/contact">Liên hệ</a>
+        <a href="/links">About Us</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/contact">Contact</a>
       </div>
     </footer>
   );
