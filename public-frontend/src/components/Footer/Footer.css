@@ -1,9 +1,9 @@
 .footer {
   background-color: var(--header-footer-bg);
-  color: var(--bg-color);
+  color: #000000;
   padding: 15px 0;
   margin-top: auto;
-  border-top: 1px solid var(--text-heading);
+  border-top: 1px solid var(--border-light);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,12 +15,14 @@
 }
 
 .footer-links a {
-  color: rgba(247, 244, 234, 0.7);
+  color: #000000;
   text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.2s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 .footer-links a:hover {
-  color: var(--bg-color);
+  color: var(--primary-color);
+  opacity: 0.8;
 }

@@ -1,4 +1,5 @@
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useSearchParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import AdminSidebar from "./components/admin/AdminSidebar";
 import UserSidebar from "./components/user/UserSidebar";
 import ArticlesPage from "./pages/admin/Articles";
@@ -15,6 +16,7 @@ import HomePage from "./pages/user/Home";
 import NotificationsPage from "./pages/user/Notifications";
 import ProfilePage from "./pages/user/Profile";
 import WriteArticlePage from "./pages/user/WriteArticle";
+import CreateArticlePage from "./pages/user/CreateArticle";
 
 function AdminLayout() {
   return (
@@ -39,6 +41,19 @@ function UserLayout() {
 }
 
 export default function App() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = searchParams.get('token');
+    if (token) {
+      localStorage.setItem('token', token);
+      searchParams.delete('token');
+      const newUrl = window.location.pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
+      navigate(newUrl, { replace: true });
+    }
+  }, [searchParams, navigate]);
+
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/admin" replace />} />
@@ -56,6 +71,7 @@ export default function App() {
         <Route index element={<HomePage />} />
         <Route path="articles/:id" element={<ArticleDetailPage />} />
         <Route path="articles/:id/edit" element={<EditArticlePage />} />
+        <Route path="create" element={<CreateArticlePage />} />
         <Route path="write" element={<WriteArticlePage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="notifications" element={<NotificationsPage />} />

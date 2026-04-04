@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './TopArticle.css';
 
 const TopArticle = ({ topLikeData, topViewData, recentData, countries }) => {
+  const navigate = useNavigate();
   const [activeSort, setActiveSort] = useState('top_like');
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -76,7 +78,12 @@ const TopArticle = ({ topLikeData, topViewData, recentData, countries }) => {
           const likeRatio = totalVotes === 0 ? 50 : (article.like_count / totalVotes) * 100;
           
           return (
-            <div key={article.id} className="article-card list-item">
+            <div 
+              key={article.id} 
+              className="article-card list-item" 
+              style={{ cursor: 'pointer' }}
+              onClick={() => navigate(`/article/${article.id}`)}
+            >
               <div className="article-content-wrapper">
                 <img src={article.image} alt={article.title} className="article-image" />
                 <div className="article-info">

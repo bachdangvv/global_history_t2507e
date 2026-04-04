@@ -1,11 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './TopRevisions.css';
 
-const TopRevisions = ({ topUpvoteData, recentData }) => {
-  const [activeSort, setActiveSort] = useState('top_upvote');
+const TopRevisions = ({ recentArticles }) => {
   const sliderRef = useRef(null);
+  const navigate = useNavigate();
   
-  const data = activeSort === 'top_upvote' ? topUpvoteData : recentData;
+  const data = recentArticles;
 
   const scrollLeft = () => {
     if (sliderRef.current) {
@@ -26,20 +27,7 @@ const TopRevisions = ({ topUpvoteData, recentData }) => {
   return (
     <div className="widget-container">
       <div className="section-header-with-sort">
-        <div className="sort-tabs">
-          <button 
-            className={`sort-tab ${activeSort === 'top_upvote' ? 'active' : ''}`}
-            onClick={() => setActiveSort('top_upvote')}
-          >
-            Top Upvote
-          </button>
-          <button 
-            className={`sort-tab ${activeSort === 'recent' ? 'active' : ''}`}
-            onClick={() => setActiveSort('recent')}
-          >
-            Recent Revision
-          </button>
-        </div>
+        <h3 style={{ margin: 0, fontSize: '1.25rem', fontFamily: 'Merriweather' }}>Recent Articles</h3>
       </div>
       
       <div className="revisions-slider-wrapper">
@@ -47,35 +35,31 @@ const TopRevisions = ({ topUpvoteData, recentData }) => {
         
         <div className="revisions-slider" ref={sliderRef}>
           {data.map((item) => (
-            <div key={item.id} className="diff-card">
-              <div className="diff-content">
-                {item.diff.map((line, index) => {
-                  let lineClass = 'diff-line';
-                  if (line.type === 'added') lineClass += ' diff-added';
-                  if (line.type === 'removed') lineClass += ' diff-removed';
-                  
-                  return (
-                    <div key={index} className={lineClass}>
-                      <span className="diff-num">{index + 1}</span>
-                      <span className="diff-text">{line.text}</span>
-                    </div>
-                  );
-                })}
+            <div 
+              key={item.id} 
+              className="diff-card" 
+              style={{ display: 'flex', flexDirection: 'column', padding: '1rem', flex: '0 0 300px', cursor: 'pointer' }}
+              onClick={() => navigate(`/article/${item.id}`)}
+            >
+              <div style={{ height: '140px', overflow: 'hidden', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+                <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
+              <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem' }}>{item.title}</h4>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                {item.summary || item.description}
+              </p>
               
-              <div className="diff-footer">
+              <div className="diff-footer" style={{ marginTop: 'auto', paddingTop: '1rem' }}>
                 <div className="author-info">
                   <div className="upvote-count">
-                    <span className="upvote-arrow">▲</span>
-                    <span>{item.upvote_count}</span>
+                    <span className="upvote-arrow">❤️</span>
+                    <span>{item.likeCount || 0}</span>
                   </div>
-                  <img src={item.author.avatar} alt="Author" className="author-avatar" />
                   <div className="author-details">
-                    <span className="diff-article-title">{item.articleTitle}</span>
-                    <span className="author-name">{item.author.username}</span>
+                    <span className="author-name">{item.author || "Anonymous"}</span>
                   </div>
                 </div>
-                <div className="status-badge">{item.status}</div>
+                <div className="status-badge" style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa' }}>{item.category}</div>
               </div>
             </div>
           ))}

@@ -1,4 +1,4 @@
-import { Bell, FilePenLine, Home, UserRound } from "lucide-react";
+import { Bell, FilePenLine, Home, UserRound, FileText } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const navItems = [
@@ -10,9 +10,15 @@ const navItems = [
     icon: Home,
   },
   {
+    to: "/user/create",
+    label: "Create",
+    description: "Submit a new article",
+    icon: FileText,
+  },
+  {
     to: "/user/write",
-    label: "Write",
-    description: "Submit a new edit",
+    label: "Edit",
+    description: "Submit a record edit",
     icon: FilePenLine,
   },
   {

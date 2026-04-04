@@ -2,6 +2,7 @@ import { Bell, BookOpen, Clock3, FileEdit, Search, Sparkles } from "lucide-react
 import { useEffect, useState } from "react";
 import ArticleCard from "../../components/user/ArticleCard";
 import { userApi } from "../../services/api";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 function formatDate(value) {
   return new Intl.DateTimeFormat("en-US", {
@@ -12,6 +13,7 @@ function formatDate(value) {
 
 export default function HomePage() {
   const [articles, setArticles] = useState([]);
+  const [myArticles, setMyArticles] = useState([]);
   const [topics, setTopics] = useState([]);
   const [profile, setProfile] = useState(null);
   const [edits, setEdits] = useState([]);
@@ -29,12 +31,14 @@ export default function HomePage() {
       userApi.getMyEdits(),
       userApi.getNotifications(),
       userApi.getHistoricalEvents(),
-    ]).then(([topicList, profileData, editList, notificationList, eventList]) => {
+      userApi.getMyArticles()
+    ]).then(([topicList, profileData, editList, notificationList, eventList, myArticleList]) => {
       setTopics(topicList);
       setProfile(profileData);
       setEdits(editList);
       setNotifications(notificationList);
       setEvents(eventList);
+      setMyArticles(myArticleList);
     });
   }, []);
 
@@ -70,13 +74,21 @@ export default function HomePage() {
     },
   ];
 
+  const chartData = myArticles.slice(0, 10).map((article, index) => ({
+    name: `Art ${index + 1}`,
+    title: article.title,
+    Likes: article.likeCount || article.like_count || 0,
+    Comments: article.commentCount || article.comment_count || 0,
+    Views: article.viewCount || article.view_count || 0,
+  }));
+
   return (
     <div className="page-shell">
       <section className="page-hero user-hero">
         <div>
           <p className="section-kicker">Home page</p>
-          <h1>Published articles</h1>
-          <p>Browse the article library, track your edit pipeline, and follow schema-backed activity from one dashboard.</p>
+          <h1>Overview</h1>
+          <p>Browse the library, evaluate your content performance, and track your review pipeline.</p>
         </div>
         <div className="hero-inline-note">
           <Sparkles size={16} />
@@ -100,6 +112,41 @@ export default function HomePage() {
             </article>
           );
         })}
+      </section>
+
+      <section className="panel-card panel-card-wide">
+        <div className="panel-heading panel-heading-compact">
+          <div>
+            <p className="section-kicker">Analytics</p>
+            <h2>Your Engagement</h2>
+            <p>Likes, comments, and views across your top authored articles.</p>
+          </div>
+        </div>
+        {myArticles.length > 0 ? (
+          <div style={{ width: '100%', height: 300, marginTop: 16 }}>
+            <ResponsiveContainer>
+              <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis dataKey="name" stroke="#888" fontSize={12} tickLine={false} />
+                <YAxis stroke="#888" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip 
+                  cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+                  contentStyle={{ backgroundColor: "#ffffff", borderColor: "#e2e8f0", borderRadius: "8px", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1)" }}
+                  labelFormatter={(label, payload) => payload?.[0]?.payload?.title || label}
+                />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '13px', paddingTop: '10px' }} />
+                <Bar dataKey="Views" fill="#8b5cf6" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                <Bar dataKey="Likes" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                <Bar dataKey="Comments" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={40} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <div className="table-empty-state">
+            <h3>No analytics data</h3>
+            <p>Publish some articles to see your engagement graph here.</p>
+          </div>
+        )}
       </section>
 
       <section className="page-grid page-grid-two page-grid-home">

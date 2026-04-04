@@ -1,46 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 import './SearchBarMain.css';
 
 const SearchBarMain = ({ onSearch }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [query, setQuery] = useState('');
+  const debounceRef = useRef(null);
+  const inputRef = useRef(null);
 
-  const handleSearch = (e) => {
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setQuery(val);
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onSearch({ query: val });
+    }, 400);
+  };
+
+  const handleClear = () => {
+    setQuery('');
+    onSearch({ query: '' });
+    inputRef.current?.focus();
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch({ query: searchQuery });
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch(e);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    // Real-time search - trigger search on every keystroke
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     onSearch({ query });
   };
 
   return (
-    <div className="search-bar-main-wrapper">
-      <div className="search-bar-main-container">
-        <form onSubmit={handleSearch} className="search-form">
-          <div className="search-input-wrapper">
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search articles, categories, countries..."
-              value={searchQuery}
-              onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
-            />
-            <button type="submit" className="search-btn">
-              <span>Search</span>
+    <div className="cr-search-bar">
+      <form onSubmit={handleSubmit} className="cr-search-form">
+        <div className="cr-search-input-container">
+          <FontAwesomeIcon icon={faSearch} className="cr-search-icon" />
+          <input
+            ref={inputRef}
+            type="text"
+            className="cr-search-input"
+            placeholder="Search history articles, civilizations, events..."
+            value={query}
+            onChange={handleChange}
+            autoComplete="off"
+          />
+          {query && (
+            <button type="button" className="cr-search-clear" onClick={handleClear}>
+              <FontAwesomeIcon icon={faTimes} />
             </button>
-          </div>
-        </form>
-      </div>
+          )}
+        </div>
+      </form>
     </div>
   );
 };

@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './HistoryEvents.css';
 
 const HistoryEvents = ({ data }) => {
+  const navigate = useNavigate();
   if (!data || data.length === 0) return null;
 
   // Get current date MM-DD
@@ -39,7 +41,12 @@ const HistoryEvents = ({ data }) => {
       
       <div className="history-list">
         {displayEvents.map((event, index) => (
-          <div key={`${event.id}-${index}`} className="history-item">
+          <div 
+            key={`${event.id}-${index}`} 
+            className="history-item" 
+            style={{ cursor: 'pointer' }}
+            onClick={() => navigate(`/search?query=${encodeURIComponent(event.title)}`)}
+          >
             <div className="history-year">{event.event_year}</div>
             <div className="history-content">
               <h4 className="history-title">{event.title}</h4>

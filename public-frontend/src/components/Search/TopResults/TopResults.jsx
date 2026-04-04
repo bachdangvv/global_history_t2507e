@@ -1,53 +1,56 @@
-import React, { useState } from 'react';
-import { searchArticles } from '../../../mockData';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { fetchTopArticles } from '../../../services/api';
 import './TopResults.css';
 
 const TopResults = () => {
-  const [hoveredId, setHoveredId] = useState(null);
+  const [articles, setArticles] = useState([]);
+  const navigate = useNavigate();
 
-  // Get top 5 articles by views
-  const topResults = searchArticles.slice(0, 5);
+  useEffect(() => {
+    fetchTopArticles().then(setArticles);
+  }, []);
+
+  if (articles.length === 0) return null;
+
+  const hero = articles[0];
+  const rest = articles.slice(1);
 
   return (
-    <div className="top-results-container">
-      <div className="top-results-wrapper">
-        <h2 className="section-title">Featured Articles</h2>
-        <div className="top-results-grid">
-          {topResults.map((article) => (
-            <div
-              key={article.id}
-              className="top-result-card"
-              onMouseEnter={() => setHoveredId(article.id)}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              <div className="card-image-container">
-                <img src={article.image} alt={article.title} className="card-image" />
-                <div className="image-overlay"></div>
-              </div>
+    <section className="cr-top-section">
+      <h2 className="cr-section-heading">Featured Articles</h2>
 
-              {hoveredId === article.id && (
-                <div className="card-content-overlay">
-                  <h3 className="card-title">{article.title}</h3>
-                  <p className="card-description">{article.description}</p>
-                  <div className="card-meta">
-                    <span className="card-category">{article.category}</span>
-                    <span className="card-country">{article.country}</span>
-                    <span className="card-rating">⭐ {(article.likes / 1000).toFixed(1)}k</span>
-                  </div>
-                  <button className="card-read-btn">Read Full History</button>
-                </div>
-              )}
-
-              {hoveredId !== article.id && (
-                <div className="card-peek">
-                  <span className="peek-icon">→</span>
-                </div>
-              )}
-            </div>
-          ))}
+      {/* Hero Card */}
+      <div className="cr-hero-card" onClick={() => navigate(`/article/${hero.id}`)}>
+        <img src={hero.image} alt={hero.title} className="cr-hero-img" />
+        <div className="cr-hero-gradient" />
+        <div className="cr-hero-content">
+          <span className="cr-badge">{hero.category}</span>
+          <h3 className="cr-hero-title">{hero.title}</h3>
+          <p className="cr-hero-desc">{hero.description}</p>
+          <div className="cr-hero-stats">
+            <span>👁️ {(hero.views / 1000).toFixed(1)}k</span>
+            <span>❤️ {(hero.likes / 1000).toFixed(1)}k</span>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Thumbnail strip */}
+      <div className="cr-thumb-strip">
+        {rest.map((a) => (
+          <div key={a.id} className="cr-thumb-card" onClick={() => navigate(`/article/${a.id}`)}>
+            <div className="cr-thumb-img-wrap">
+              <img src={a.image} alt={a.title} />
+              <div className="cr-thumb-overlay" />
+            </div>
+            <div className="cr-thumb-info">
+              <span className="cr-thumb-cat">{a.category}</span>
+              <h4 className="cr-thumb-title">{a.title}</h4>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 };
 

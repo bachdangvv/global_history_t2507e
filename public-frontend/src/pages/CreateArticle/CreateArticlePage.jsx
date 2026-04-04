@@ -1,30 +1,46 @@
-import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import api, { fetchCategories } from '../../services/api';
 import ArticleForm from '../../components/ArticleForm/ArticleForm';
 import Sidebar from '../../components/Home/Sidebar/Sidebar';
-import { mockData } from '../../mockData';
+import { useAuth } from '../../context/AuthContext';
+import { useNotification } from '../../context/NotificationContext';
 import '../EditorPage.css';
 
 const CreateArticlePage = ({ sidebarOpen }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, loading } = useAuth();
+  const { addNotification } = useNotification();
+
+  const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: fetchCategories });
+
+  useEffect(() => {
+    if (!loading && !user) {
+      addNotification('Please login to create an article.', 'error');
+      navigate('/login', { state: { from: location } });
+    }
+  }, [user, loading, navigate, location, addNotification]);
 
   const mutation = useMutation({
-    mutationFn: (data) => axios.post('/api/articles', data),
+    mutationFn: (data) => api.post('/user/articles', data),
     onSuccess: () => {
-      alert('Article created successfully!');
+      addNotification('Article created successfully! It is pending moderation.', 'success');
       navigate('/');
     },
     onError: (error) => {
-      alert(error?.response?.data?.message || 'Failed to create article. Please try again.');
+      addNotification(error?.response?.data?.message || 'Failed to create article. Please try again.', 'error');
     },
   });
+
+  if (loading || !user) return null;
 
   return (
     <div className={`editor-page-wrapper ${sidebarOpen ? 'sidebar-open' : ''}`}>
       {/* Sidebar */}
       <aside className="editor-sidebar-col">
-        <Sidebar data={mockData.categories} sidebarOpen={sidebarOpen} />
+        <Sidebar data={categories} sidebarOpen={sidebarOpen} />
       </aside>
 
       {/* Main Editor Area */}

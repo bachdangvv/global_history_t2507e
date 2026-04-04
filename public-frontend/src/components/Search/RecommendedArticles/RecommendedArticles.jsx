@@ -1,52 +1,54 @@
-import React from 'react';
-import { searchArticles } from '../../../mockData';
+import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { fetchRecommendedArticles } from '../../../services/api';
 import './RecommendedArticles.css';
 
 const RecommendedArticles = () => {
-  // Get a mix of articles - recommendations based on various criteria
-  const recommended = searchArticles
-    .slice(0, -1)
-    .reverse()
-    .slice(0, 6);
+  const [articles, setArticles] = useState([]);
+  const scrollRef = useRef(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchRecommendedArticles().then(setArticles);
+  }, []);
+
+  const scroll = (dir) => {
+    if (!scrollRef.current) return;
+    const amount = 320;
+    scrollRef.current.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+  };
+
+  if (articles.length === 0) return null;
 
   return (
-    <div className="recommended-articles-container">
-      <div className="recommended-articles-wrapper">
-        <h2 className="section-title">Recommended For You</h2>
-        <p className="section-subtitle">Discover articles you might find interesting</p>
-
-        <div className="recommended-grid">
-          {recommended.map((article) => (
-            <div key={article.id} className="recommended-card">
-              <div className="recommended-image-wrapper">
-                <img src={article.image} alt={article.title} />
-                <div className="recommended-overlay">
-                  <button className="recommended-read-btn">Read Now</button>
-                </div>
-              </div>
-
-              <div className="recommended-content">
-                <div className="recommended-meta">
-                  <span className="meta-category">{article.category}</span>
-                  <span className="meta-views">👁️ {(article.views / 1000).toFixed(1)}k</span>
-                </div>
-
-                <h3 className="recommended-title">{article.title}</h3>
-
-                <p className="recommended-description">
-                  {article.description.substring(0, 85)}...
-                </p>
-
-                <div className="recommended-footer">
-                  <span className="country">{article.country}</span>
-                  <span className="likes">❤️ {(article.likes / 1000).toFixed(1)}k</span>
-                </div>
-              </div>
-            </div>
-          ))}
+    <section className="cr-rec-section">
+      <div className="cr-rec-header">
+        <h2 className="cr-section-heading">You Might Also Like</h2>
+        <div className="cr-rec-arrows">
+          <button className="cr-arrow-btn" onClick={() => scroll('left')}>‹</button>
+          <button className="cr-arrow-btn" onClick={() => scroll('right')}>›</button>
         </div>
       </div>
-    </div>
+
+      <div className="cr-rec-scroll" ref={scrollRef}>
+        {articles.map((a) => (
+          <div key={a.id} className="cr-rec-card" onClick={() => navigate(`/article/${a.id}`)}>
+            <div className="cr-rec-img-wrap">
+              <img src={a.image} alt={a.title} />
+              <div className="cr-rec-img-overlay" />
+            </div>
+            <div className="cr-rec-body">
+              <span className="cr-rec-cat">{a.category}</span>
+              <h4 className="cr-rec-title">{a.title}</h4>
+              <div className="cr-rec-footer">
+                <span>{a.country}</span>
+                <span>❤️ {(a.likes / 1000).toFixed(1)}k</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 };
 

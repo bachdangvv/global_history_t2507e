@@ -2,35 +2,46 @@ import React from 'react';
 import SearchResultCard from '../SearchResultCard/SearchResultCard';
 import './SearchResults.css';
 
-const SearchResults = ({ results, isLoading }) => {
+const SearchResults = ({ results, isLoading, query }) => {
   if (isLoading) {
     return (
-      <div className="search-results-container">
-        <div className="loading">Loading search results...</div>
+      <div className="cr-results-container">
+        <div className="cr-results-grid">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="cr-skeleton-card">
+              <div className="cr-skeleton-img shimmer" />
+              <div className="cr-skeleton-body">
+                <div className="cr-skeleton-line short shimmer" />
+                <div className="cr-skeleton-line shimmer" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
   if (results.length === 0) {
     return (
-      <div className="search-results-container">
-        <div className="no-results">
-          <p>No results found</p>
-          <p className="no-results-hint">Try a different search term</p>
+      <div className="cr-results-container">
+        <div className="cr-no-results">
+          <div className="cr-no-results-icon">🔍</div>
+          <h3>No results found for "{query}"</h3>
+          <p>Try a different keyword or browse our featured articles below</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="search-results-container">
-      <div className="results-header">
+    <div className="cr-results-container">
+      <div className="cr-results-header">
         <h2>Search Results</h2>
-        <span className="result-count">{results.length} results found</span>
+        <span className="cr-results-count">{results.length} articles found</span>
       </div>
-      <div className="search-results-grid">
-        {results.map((result) => (
-          <SearchResultCard key={result.id} result={result} />
+      <div className="cr-results-grid">
+        {results.map((r) => (
+          <SearchResultCard key={r.id} result={r} />
         ))}
       </div>
     </div>
