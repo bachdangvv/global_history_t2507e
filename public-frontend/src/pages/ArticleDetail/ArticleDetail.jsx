@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchArticleDetail, toggleArticleLike, fetchComments, postComment } from '../../services/api';
+import { fetchArticleDetail, toggleArticleLike, fetchComments, postComment, fetchRelatedBooks, fetchRelatedAuthors, fetchRelatedExhibitions } from '../../services/api';
 import { useNotification } from '../../context/NotificationContext';
 import { useAuth } from '../../context/AuthContext';
 import './ArticleDetail.css';
@@ -24,6 +24,11 @@ const ArticleDetail = () => {
   const [commentContent, setCommentContent] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
 
+  // Related content
+  const [relatedBooks, setRelatedBooks] = useState([]);
+  const [relatedAuthors, setRelatedAuthors] = useState([]);
+  const [relatedExhibitions, setRelatedExhibitions] = useState([]);
+
   useEffect(() => {
     setIsLoading(true);
     fetchArticleDetail(id).then((data) => {
@@ -35,6 +40,9 @@ const ArticleDetail = () => {
     });
 
     fetchComments(id).then(setComments);
+    fetchRelatedBooks(id).then(setRelatedBooks);
+    fetchRelatedAuthors(id).then(setRelatedAuthors);
+    fetchRelatedExhibitions(id).then(setRelatedExhibitions);
   }, [id]);
 
   const handleLike = async () => {
@@ -254,6 +262,81 @@ const ArticleDetail = () => {
           )}
         </div>
       </div>
+
+      {/* ── Related Books Section ──────────────── */}
+      {relatedBooks && relatedBooks.length > 0 && (
+        <div className="ad-related-section">
+          <div className="ad-related-container">
+            <h2 className="ad-related-title">📚 Related Books</h2>
+            <div className="ad-related-grid">
+              {relatedBooks.map((book) => (
+                <div key={book.id} className="ad-related-card">
+                  {book.coverImage && (
+                    <div className="ad-related-image">
+                      <img src={book.coverImage} alt={book.title} />
+                    </div>
+                  )}
+                  <div className="ad-related-content">
+                    <h4 className="ad-related-item-title">{book.title}</h4>
+                    {book.author && <p className="ad-related-author">by {book.author}</p>}
+                    {book.description && <p className="ad-related-item-desc">{book.description}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Related Authors Section ──────────────── */}
+      {relatedAuthors && relatedAuthors.length > 0 && (
+        <div className="ad-related-section">
+          <div className="ad-related-container">
+            <h2 className="ad-related-title">✍️ Related Authors</h2>
+            <div className="ad-related-grid">
+              {relatedAuthors.map((author) => (
+                <div key={author.id} className="ad-related-card">
+                  {author.profileImage && (
+                    <div className="ad-related-image">
+                      <img src={author.profileImage} alt={author.name} />
+                    </div>
+                  )}
+                  <div className="ad-related-content">
+                    <h4 className="ad-related-item-title">{author.name}</h4>
+                    {author.specialty && <p className="ad-related-author">{author.specialty}</p>}
+                    {author.biography && <p className="ad-related-item-desc">{author.biography}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Related Exhibitions Section ──────────────── */}
+      {relatedExhibitions && relatedExhibitions.length > 0 && (
+        <div className="ad-related-section">
+          <div className="ad-related-container">
+            <h2 className="ad-related-title">🏛️ Related Exhibitions</h2>
+            <div className="ad-related-grid">
+              {relatedExhibitions.map((exhibition) => (
+                <div key={exhibition.id} className="ad-related-card">
+                  {exhibition.image && (
+                    <div className="ad-related-image">
+                      <img src={exhibition.image} alt={exhibition.title} />
+                    </div>
+                  )}
+                  <div className="ad-related-content">
+                    <h4 className="ad-related-item-title">{exhibition.title}</h4>
+                    {exhibition.venue && <p className="ad-related-author">{exhibition.venue}</p>}
+                    {exhibition.description && <p className="ad-related-item-desc">{exhibition.description}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import api, { fetchCategories, fetchArticleDetail } from '../../services/api';
+import api, { fetchCategories, fetchArticleDetail, fetchBooks, fetchAuthors, fetchExhibitions } from '../../services/api';
 import ArticleForm from '../../components/ArticleForm/ArticleForm';
 import Sidebar from '../../components/Home/Sidebar/Sidebar';
 import { useAuth } from '../../context/AuthContext';
@@ -16,6 +16,9 @@ const EditArticlePage = ({ sidebarOpen }) => {
   const { addNotification } = useNotification();
 
   const { data: categories = [] } = useQuery({ queryKey: ['categories'], queryFn: fetchCategories });
+  const { data: books = [] } = useQuery({ queryKey: ['books'], queryFn: fetchBooks });
+  const { data: authors = [] } = useQuery({ queryKey: ['authors'], queryFn: fetchAuthors });
+  const { data: exhibitions = [] } = useQuery({ queryKey: ['exhibitions'], queryFn: fetchExhibitions });
 
   useEffect(() => {
     if (!loading && !user) {
@@ -47,7 +50,7 @@ const EditArticlePage = ({ sidebarOpen }) => {
     <div className={`editor-page-wrapper ${sidebarOpen ? 'sidebar-open' : ''}`}>
       {/* Sidebar */}
       <aside className="editor-sidebar-col">
-        <Sidebar data={categories} sidebarOpen={sidebarOpen} />
+        <Sidebar data={categories} books={books} authors={authors} exhibitions={exhibitions} sidebarOpen={sidebarOpen} />
       </aside>
 
       {/* Main Editor Area */}

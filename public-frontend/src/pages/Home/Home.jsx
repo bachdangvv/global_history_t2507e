@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchCategories, fetchEvents, fetchTopArticles, fetchRecommendedArticles, fetchSearchResults } from '../../services/api';
+import { fetchCategories, fetchEvents, fetchTopArticles, fetchRecommendedArticles, fetchSearchResults, fetchBooks, fetchAuthors, fetchExhibitions } from '../../services/api';
 import './Home.css';
 
 import TopRevisions from '../../components/Home/TopRevisions/TopRevisions';
@@ -14,6 +14,9 @@ const Home = ({ sidebarOpen }) => {
   const { data: topArticles = [] } = useQuery({ queryKey: ['topArticles'], queryFn: fetchTopArticles });
   const { data: recentArticles = [] } = useQuery({ queryKey: ['recentArticles'], queryFn: fetchRecommendedArticles });
   const { data: searchArticles = [] } = useQuery({ queryKey: ['searchArticles'], queryFn: () => fetchSearchResults('') });
+  const { data: books = [] } = useQuery({ queryKey: ['books'], queryFn: fetchBooks });
+  const { data: authors = [] } = useQuery({ queryKey: ['authors'], queryFn: fetchAuthors });
+  const { data: exhibitions = [] } = useQuery({ queryKey: ['exhibitions'], queryFn: fetchExhibitions });
 
   // Dynamic compute
   const mappedCategories = categories.map(c => ({ ...c, icon: c.icon || '📌' }));
@@ -38,7 +41,13 @@ const Home = ({ sidebarOpen }) => {
     <div className={`home-wrapper ${sidebarOpen ? 'sidebar-open' : ''}`}>
       {/* Sidebar — always rendered, grid column on desktop, overlay on mobile */}
       <aside className="home-sidebar-col">
-        <Sidebar data={mappedCategories} sidebarOpen={sidebarOpen} />
+        <Sidebar 
+          data={mappedCategories} 
+          books={books}
+          authors={authors}
+          exhibitions={exhibitions}
+          sidebarOpen={sidebarOpen} 
+        />
       </aside>
 
       {/* Main grid content */}

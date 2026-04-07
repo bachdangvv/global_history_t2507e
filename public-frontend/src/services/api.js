@@ -28,6 +28,60 @@ export async function fetchEvents() {
   return data;
 }
 
+export async function fetchBooks() {
+  try {
+    const { data } = await api.get('/books');
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchAuthors() {
+  try {
+    const { data } = await api.get('/authors');
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchExhibitions() {
+  try {
+    const { data } = await api.get('/exhibitions');
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchRelatedBooks(articleId) {
+  try {
+    const { data } = await api.get(`/articles/${articleId}/books`);
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchRelatedAuthors(articleId) {
+  try {
+    const { data } = await api.get(`/articles/${articleId}/authors`);
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchRelatedExhibitions(articleId) {
+  try {
+    const { data } = await api.get(`/articles/${articleId}/exhibitions`);
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
 // ── Articles ────────────────────────────────────────
 
 // ── Helper to map ArticleResponse to classic mock shape ────────

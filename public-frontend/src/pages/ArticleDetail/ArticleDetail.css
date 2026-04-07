@@ -721,3 +721,133 @@
     font-size: 0.95rem;
   }
 }
+
+/* ── Related Books, Authors & Exhibitions ──────────────────────── */
+.ad-related-section {
+  width: 100%;
+  background: linear-gradient(180deg, #f9f9f7 0%, #f5f3f1 100%);
+  padding: 60px 40px;
+  border-top: 1px solid #e0ddd8;
+}
+
+.ad-related-container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.ad-related-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 32px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e0ddd8;
+  letter-spacing: -0.01em;
+}
+
+.ad-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.ad-related-card {
+  background: white;
+  border: 1px solid #e0ddd8;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.ad-related-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  border-color: #d0ccc3;
+}
+
+.ad-related-image {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, #f5f3f1 0%, #ede8e3 100%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad-related-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.ad-related-card:hover .ad-related-image img {
+  transform: scale(1.05);
+}
+
+.ad-related-content {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.ad-related-item-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ad-related-card:hover .ad-related-item-title {
+  color: #8b6d4b;
+}
+
+.ad-related-author {
+  font-size: 0.85rem;
+  color: #8b6d4b;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ad-related-item-desc {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .ad-related-section {
+    padding: 40px 20px;
+  }
+
+  .ad-related-title {
+    font-size: 1.4rem;
+    margin-bottom: 24px;
+  }
+
+  .ad-related-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .ad-related-content {
+    padding: 14px;
+  }
+}
