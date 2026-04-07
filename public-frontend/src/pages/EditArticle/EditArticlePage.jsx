@@ -6,6 +6,7 @@ import ArticleForm from '../../components/ArticleForm/ArticleForm';
 import Sidebar from '../../components/Home/Sidebar/Sidebar';
 import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
+import { config } from '../../config/appConfig';
 import '../EditorPage.css';
 
 const EditArticlePage = ({ sidebarOpen }) => {
@@ -77,6 +78,23 @@ const EditArticlePage = ({ sidebarOpen }) => {
 
         {!isLoading && !isError && article && (
           <>
+            <div className="dashboard-recommendation-banner">
+              <div className="banner-content">
+                <span className="banner-icon">📊</span>
+                <div className="banner-text">
+                  <strong>Enhanced Dashboard Available</strong>
+                  <p>Use our dashboard for better article editing with real-time metrics, detailed analytics, and advanced tools.</p>
+                </div>
+                <a 
+                  href={config.getDashboardURL(config.dashboardPaths.editArticle)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="banner-cta"
+                >
+                  Go to Dashboard →
+                </a>
+              </div>
+            </div>
             <div className="editor-edit-badge">
               📝 Editing article <strong>#{id}</strong>
             </div>

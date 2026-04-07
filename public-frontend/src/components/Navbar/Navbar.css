@@ -248,6 +248,46 @@
   color: #c0392b;
 }
 
+/* ── Write Article Button ── */
+.write-article-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(139, 109, 75, 0.25);
+  font-family: var(--font-body);
+}
+
+.write-article-btn:hover {
+  background: var(--primary-hover);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(139, 109, 75, 0.35);
+}
+
+.write-article-btn svg {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .write-article-btn span {
+    display: none;
+  }
+  
+  .write-article-btn {
+    padding: 8px;
+  }
+}
+
 @media screen and (max-width: 768px) {
   .navbar-container { padding: 0 15px; }
   .logo-text { font-size: 1.2rem; }

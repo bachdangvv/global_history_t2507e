@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faSignOutAlt, faUser, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faSignOutAlt, faUser, faTachometerAlt, faPen, faBell } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../context/AuthContext';
+import { config } from '../../config/appConfig';
 import './Navbar.css';
 
 const Navbar = ({ onToggleSidebar }) => {
@@ -69,6 +70,19 @@ const Navbar = ({ onToggleSidebar }) => {
             {searchHover && <div className="search-tooltip">Search</div>}
           </div>
 
+          {user && (
+            <a
+              href={config.getDashboardURL(config.dashboardPaths.createArticle)}
+              target="_blank"
+              rel="noreferrer"
+              className="write-article-btn"
+              title="Write and publish a new article"
+            >
+              <FontAwesomeIcon icon={faPen} />
+              <span>Write</span>
+            </a>
+          )}
+
           {user ? (
             <div className="navbar-avatar-wrap" ref={avatarRef}>
               <button
@@ -86,13 +100,44 @@ const Navbar = ({ onToggleSidebar }) => {
                     <span className="avatar-menu-role">{user?.role || 'Contributor'}</span>
                   </div>
                   <a
-                    href="http://localhost:5174/admin"
+                    href={config.getDashboardURL(config.dashboardPaths.home)}
                     className="avatar-menu-item"
                     target="_blank"
                     rel="noreferrer"
+                    title="View your articles and contributions"
+                  >
+                    <FontAwesomeIcon icon={faUser} />
+                    My Articles
+                  </a>
+                  <a
+                    href={config.getDashboardURL(config.dashboardPaths.createArticle)}
+                    className="avatar-menu-item"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Write and publish a new article"
+                  >
+                    <FontAwesomeIcon icon={faPen} />
+                    Write Article
+                  </a>
+                  <a
+                    href={config.getDashboardURL(config.dashboardPaths.profile)}
+                    className="avatar-menu-item"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Edit your profile and view your metrics"
                   >
                     <FontAwesomeIcon icon={faTachometerAlt} />
-                    Dashboard
+                    Profile & Metrics
+                  </a>
+                  <a
+                    href={config.getDashboardURL(config.dashboardPaths.notifications)}
+                    className="avatar-menu-item"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="View notifications and feedback"
+                  >
+                    <FontAwesomeIcon icon={faBell} />
+                    Notifications
                   </a>
                   <button className="avatar-menu-item avatar-menu-logout" onClick={handleLogout}>
                     <FontAwesomeIcon icon={faSignOutAlt} />

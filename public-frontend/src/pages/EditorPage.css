@@ -102,6 +102,68 @@
   color: var(--text-heading);
 }
 
+/* --- Dashboard Recommendation Banner --- */
+.dashboard-recommendation-banner {
+  background: linear-gradient(135deg, var(--primary-color) 0%, #a0673b 100%);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  color: white;
+  box-shadow: 0 6px 20px rgba(139, 109, 75, 0.2);
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.banner-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.banner-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.banner-text strong {
+  display: block;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.banner-text p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.95;
+  line-height: 1.5;
+}
+
+.banner-cta {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.banner-cta:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
 /* --- Responsive --- */
 @media (max-width: 900px) {
   .editor-page-wrapper.sidebar-open .editor-sidebar-col,
@@ -116,6 +178,16 @@
 
   .editor-page-title {
     font-size: 1.4rem;
+  }
+
+  .banner-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .banner-cta {
+    width: 100%;
+    justify-content: center;
   }
 }
 

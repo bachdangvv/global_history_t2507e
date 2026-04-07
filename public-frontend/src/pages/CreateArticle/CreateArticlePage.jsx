@@ -6,6 +6,7 @@ import ArticleForm from '../../components/ArticleForm/ArticleForm';
 import Sidebar from '../../components/Home/Sidebar/Sidebar';
 import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
+import { config } from '../../config/appConfig';
 import '../EditorPage.css';
 
 const CreateArticlePage = ({ sidebarOpen }) => {
@@ -53,6 +54,24 @@ const CreateArticlePage = ({ sidebarOpen }) => {
           <p className="editor-page-subtitle">
             Share your knowledge with the Global History community. Your article will be reviewed before publication.
           </p>
+        </div>
+
+        <div className="dashboard-recommendation-banner">
+          <div className="banner-content">
+            <span className="banner-icon">📊</span>
+            <div className="banner-text">
+              <strong>Enhanced Dashboard Available</strong>
+              <p>Use our dashboard for better article creation with real-time metrics, analytics, and improved tools.</p>
+            </div>
+            <a 
+              href={config.getDashboardURL(config.dashboardPaths.createArticle)}
+              target="_blank"
+              rel="noreferrer"
+              className="banner-cta"
+            >
+              Go to Dashboard →
+            </a>
+          </div>
         </div>
 
         <ArticleForm
