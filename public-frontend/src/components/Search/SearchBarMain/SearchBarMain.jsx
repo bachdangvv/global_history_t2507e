@@ -43,13 +43,13 @@ const SearchBarMain = ({ onSearch }) => {
             ref={inputRef}
             type="text"
             className="cr-search-input"
-            placeholder="Search history articles, civilizations, events..."
+            placeholder="Search history articles, topics, events..."
             value={query}
             onChange={handleChange}
             autoComplete="off"
           />
           {query && (
-            <button type="button" className="cr-search-clear" onClick={handleClear}>
+            <button type="button" className="cr-search-clear" onClick={handleClear} title="Clear search">
               <FontAwesomeIcon icon={faTimes} />
             </button>
           )}

@@ -105,8 +105,7 @@ const ArticleDetail = () => {
   return (
     <div className="ad-page">
       {/* ── Hero Banner ──────────────── */}
-      <div className="ad-hero">
-        <img src={article.image} alt={article.title} className="ad-hero-img" />
+      <div className="ad-hero" style={{ backgroundImage: `url(${article.image})` }}>
         <div className="ad-hero-gradient" />
         <div className="ad-hero-content">
           <button className="ad-back-btn" onClick={() => navigate(-1)}>← Back</button>

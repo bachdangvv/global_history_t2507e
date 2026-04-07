@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchBarMain from '../../components/Search/SearchBarMain/SearchBarMain';
 import SearchResults from '../../components/Search/SearchResults/SearchResults';
-import TopResults from '../../components/Search/TopResults/TopResults';
-import RecommendedArticles from '../../components/Search/RecommendedArticles/RecommendedArticles';
 import { fetchSearchResults } from '../../services/api';
 import './Search.css';
 
@@ -58,9 +56,11 @@ const Search = () => {
           <SearchResults results={results} isLoading={isLoading} query={currentQuery} />
         ) : (
           <div className="cr-search-default-view">
-            <TopResults />
-            <div className="cr-search-divider"></div>
-            <RecommendedArticles />
+            <div className="cr-search-placeholder">
+              <div className="cr-placeholder-icon">🔍</div>
+              <h2>Start exploring historical content</h2>
+              <p>Search for articles, historical events, authors, and civilizations</p>
+            </div>
           </div>
         )}
       </div>

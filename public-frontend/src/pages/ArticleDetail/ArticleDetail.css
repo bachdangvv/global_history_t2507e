@@ -1,125 +1,241 @@
 /* ==========================================
-   ARTICLE DETAIL — Dark Cinematic Theme
+   ARTICLE DETAIL — Professional Encyclopedia Style
    ========================================== */
 
 .ad-page {
-  background: #0a0a0a;
-  color: #f0ede4;
+  background: linear-gradient(to bottom, #f9f9f7 0%, #f5f3f1 100%);
+  color: #2a2a2a;
   min-height: 100vh;
+  font-family: 'Georgia', 'Garamond', serif;
 }
 
-/* ── Hero Banner ────────────────────── */
-.ad-hero {
-  position: relative;
+/* ── Topic/Category Banner ────────────────── */
+.ad-topic-banner {
   width: 100%;
-  height: 480px;
+  padding: 24px 40px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  border-bottom: 1px solid #a93226;
+  position: relative;
   overflow: hidden;
 }
 
-.ad-hero-img {
+.ad-topic-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.1;
+}
+
+.ad-topic-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 40px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ad-topic-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  white-space: nowrap;
+}
+
+.ad-topic-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Category-specific banner colors */
+.ad-topic-banner[data-category="history"] {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  border-bottom-color: #2471a3;
+}
+
+.ad-topic-banner[data-category="biography"] {
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+  border-bottom-color: #7d3c98;
+}
+
+.ad-topic-banner[data-category="culture"] {
+  background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+  border-bottom-color: #138d75;
+}
+
+.ad-topic-banner[data-category="politics"] {
+  background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+  border-bottom-color: #ba4a00;
+}
+
+.ad-topic-banner[data-category="military"] {
+  background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+  border-bottom-color: #1a252f;
+}
+
+.ad-topic-banner[data-category="science"] {
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  border-bottom-color: #d35400;
+}
+
+.ad-topic-banner[data-category="art"] {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  border-bottom-color: #a93226;
+}
+
+.ad-topic-banner[data-category="economy"] {
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+  border-bottom-color: #1e8449;
+}
+
+/* ── Featured Image Section ────────────────── */
+.ad-hero {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding: 80px 0;
+  border-bottom: 1px solid #e0ddd8;
+  position: relative;
+  min-height: 350px;
+}
+
+.ad-hero-img {
+  display: none;
 }
 
 .ad-hero-gradient {
+  display: block;
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    #0a0a0a 0%,
-    rgba(10, 10, 10, 0.7) 40%,
-    rgba(10, 10, 10, 0.3) 70%,
-    transparent 100%
-  );
-}
-
-.ad-hero-content {
-  position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   right: 0;
-  padding: 40px;
-  max-width: 1200px;
-  margin: 0 auto;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(245, 243, 241, 0.9) 100%
+  );
   z-index: 1;
 }
 
+.ad-hero-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 40px;
+  position: relative;
+  z-index: 10;
+}
+
 .ad-back-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #f0ede4;
-  padding: 8px 18px;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: #2a2a2a;
+  padding: 10px 16px;
+  border-radius: 4px;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  margin-bottom: 24px;
   display: inline-block;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .ad-back-btn:hover {
-  background: rgba(231, 76, 60, 0.15);
-  border-color: #e74c3c;
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #8b6d4b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .ad-hero-badges {
   display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
 }
 
 .ad-badge {
   display: inline-block;
-  padding: 5px 14px;
+  padding: 6px 12px;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: 4px;
+  letter-spacing: 0.08em;
+  border-radius: 3px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .ad-badge.cat {
-  background: #e74c3c;
+  background: rgba(231, 76, 60, 0.9);
   color: #fff;
 }
 
 .ad-badge.country {
-  background: rgba(52, 152, 219, 0.2);
-  color: #5dade2;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2a2a2a;
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .ad-hero-title {
-  font-size: 2.6rem;
-  font-weight: 800;
-  color: #fff;
-  margin: 0 0 14px;
-  line-height: 1.15;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 16px;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .ad-hero-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  font-size: 0.88rem;
-  color: #999;
+  gap: 24px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .ad-hero-meta strong {
-  color: #bbb;
+  color: #ffffff;
+  font-weight: 600;
 }
 
 /* ── Stats Bar ──────────────────────── */
 .ad-stats-bar {
-  max-width: 1200px;
+  max-width: 960px;
   margin: 0 auto;
   padding: 0 40px;
   display: flex;
-  gap: 2px;
-  background: #111215;
-  border-radius: 12px;
-  overflow: hidden;
-  transform: translateY(-24px);
+  gap: 1px;
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+  transform: none;
+  border-bottom: 1px solid #e0ddd8;
 }
 
 .ad-stat,
@@ -127,16 +243,22 @@
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 18px 20px;
-  background: #141519;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  background: transparent;
   border: none;
-  color: #f0ede4;
-  font-family: inherit;
-  font-size: 0.95rem;
+  border-right: 1px solid #e0ddd8;
+  color: #2a2a2a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
   cursor: default;
   transition: all 0.2s;
+}
+
+.ad-stat:last-child,
+.ad-stat-btn:last-child {
+  border-right: none;
 }
 
 .ad-stat-btn {
@@ -144,11 +266,11 @@
 }
 
 .ad-stat-btn:hover {
-  background: #1c1e23;
+  background: #f5f3f1;
 }
 
 .ad-stat-btn.liked {
-  background: rgba(231, 76, 60, 0.1);
+  background: transparent;
 }
 
 .ad-stat-btn.liked .ad-stat-value {
@@ -156,99 +278,103 @@
 }
 
 .ad-stat-icon {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  flex-shrink: 0;
 }
 
 .ad-stat-label {
-  font-size: 0.8rem;
-  color: #6b6b6b;
+  font-size: 0.75rem;
+  color: #999;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   font-weight: 600;
 }
 
 .ad-stat-value {
   font-weight: 700;
   font-size: 1rem;
+  color: #2a2a2a;
 }
 
 /* ── Content Layout ─────────────────── */
 .ad-content-wrapper {
-  max-width: 1200px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 0 40px 60px;
+  padding: 40px;
   display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 60px;
+  grid-template-columns: 1fr;
+  gap: 40px;
 }
 
 /* TOC */
 .ad-toc {
-  position: sticky;
-  top: 80px;
-  height: fit-content;
-  background: #141519;
-  border-radius: 12px;
+  position: static;
+  height: auto;
+  background: #f5f3f1;
+  border-radius: 4px;
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid #e0ddd8;
+  margin-bottom: 40px;
 }
 
 .ad-toc-title {
   font-weight: 700;
-  font-size: 0.9rem;
-  color: #f0ede4;
-  padding-bottom: 12px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #d0ccc3;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .ad-toc-nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .ad-toc-link {
   display: block;
   padding: 8px 12px;
-  color: #888;
+  color: #0c5cad;
   text-decoration: none;
-  font-size: 0.82rem;
-  border-left: 2px solid transparent;
-  border-radius: 4px;
+  font-size: 0.85rem;
+  border-left: 3px solid transparent;
+  border-radius: 0;
   transition: all 0.2s;
-  line-height: 1.4;
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .ad-toc-link:hover {
-  color: #f0ede4;
-  background: rgba(255, 255, 255, 0.04);
-  border-left-color: #555;
+  color: #0a3f8f;
+  background: rgba(12, 92, 173, 0.05);
+  border-left-color: #0c5cad;
 }
 
 .ad-toc-link.active {
-  color: #e74c3c;
-  background: rgba(231, 76, 60, 0.06);
-  border-left-color: #e74c3c;
+  color: #8b6d4b;
+  background: rgba(139, 109, 75, 0.08);
+  border-left-color: #8b6d4b;
   font-weight: 600;
 }
 
 /* Main Content */
 .ad-main {
   min-width: 0;
-  max-width: 720px;
+  max-width: 100%;
 }
 
 .ad-description {
-  font-size: 1.05rem;
-  color: #b0ad9f;
+  font-size: 1.1rem;
+  color: #4a4a4a;
   font-style: italic;
-  line-height: 1.7;
+  line-height: 1.8;
   padding-bottom: 24px;
-  margin-bottom: 28px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 32px;
+  border-bottom: 1px solid #e0ddd8;
 }
 
 .ad-description p {
@@ -256,74 +382,80 @@
 }
 
 .ad-section-heading {
-  font-size: 1.7rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  color: #ffffff;
-  margin: 48px 0 20px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #1a1a1a;
+  margin: 40px 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e0ddd8;
+  letter-spacing: -0.01em;
 }
 
 .ad-sub-heading {
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #eaeaea;
+  font-weight: 700;
+  color: #2a2a2a;
   margin: 32px 0 16px;
+  letter-spacing: -0.01em;
 }
 
 .ad-paragraph {
   font-size: 1.05rem;
-  color: #d8d6cc;
+  color: #3a3a3a;
   line-height: 1.9;
   letter-spacing: 0.01em;
-  margin: 0 0 24px;
+  margin: 0 0 18px;
 }
 
 .ad-list {
-  margin: 12px 0 16px 24px;
+  margin: 16px 0 20px 24px;
   padding: 0;
   list-style: disc;
 }
 
 .ad-list li {
   font-size: 0.95rem;
-  color: #c5c2b8;
-  line-height: 1.7;
-  margin-bottom: 6px;
+  color: #3a3a3a;
+  line-height: 1.8;
+  margin-bottom: 8px;
 }
 
 /* ── Comments ───────────────────────── */
 .ad-comments-section {
-  max-width: 1200px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 0 40px 80px;
+  padding: 40px;
+  border-top: 2px solid #e0ddd8;
 }
 
 .ad-comments-title {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #f0ede4;
-  margin: 0 0 24px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #1a1a1a;
+  margin: 0 0 28px;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .ad-comment-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 32px;
+  gap: 14px;
+  margin-bottom: 36px;
+  padding: 20px;
+  background: #f5f3f1;
+  border-radius: 4px;
 }
 
 .ad-comment-author,
 .ad-comment-textarea {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  background: #141519;
-  color: #f0ede4;
-  font-family: inherit;
+  padding: 12px 14px;
+  border: 1px solid #d0ccc3;
+  border-radius: 4px;
+  background: white;
+  color: #2a2a2a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 0.92rem;
   outline: none;
   transition: all 0.2s;
@@ -332,37 +464,39 @@
 
 .ad-comment-author:focus,
 .ad-comment-textarea:focus {
-  border-color: #e74c3c;
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+  border-color: #8b6d4b;
+  box-shadow: 0 0 0 3px rgba(139, 109, 75, 0.1);
 }
 
 .ad-comment-author::placeholder,
 .ad-comment-textarea::placeholder {
-  color: #555;
+  color: #999;
 }
 
 .ad-comment-textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 100px;
 }
 
 .ad-comment-submit {
-  align-self: flex-end;
+  align-self: flex-start;
   padding: 10px 28px;
   background: #e74c3c;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  font-family: inherit;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0.4px;
 }
 
 .ad-comment-submit:hover:not(:disabled) {
   background: #c0392b;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
 
 .ad-comment-submit:disabled {
@@ -374,28 +508,28 @@
 .ad-comments-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .ad-no-comments {
   text-align: center;
-  color: #555;
+  color: #999;
   padding: 40px 0;
   font-size: 0.95rem;
 }
 
 .ad-comment {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   padding: 16px;
-  background: #141519;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: #f9f9f7;
+  border-radius: 4px;
+  border: 1px solid #e0ddd8;
 }
 
 .ad-comment-avatar {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: linear-gradient(135deg, #e74c3c, #c0392b);
   color: #fff;
@@ -405,6 +539,7 @@
   font-weight: 700;
   font-size: 1rem;
   flex-shrink: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .ad-comment-body {
@@ -416,24 +551,25 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .ad-comment-name {
   font-weight: 600;
   font-size: 0.9rem;
-  color: #f0ede4;
+  color: #2a2a2a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .ad-comment-time {
   font-size: 0.78rem;
-  color: #555;
+  color: #999;
 }
 
 .ad-comment-text {
   font-size: 0.9rem;
-  color: #b0ad9f;
-  line-height: 1.6;
+  color: #3a3a3a;
+  line-height: 1.7;
   margin: 0;
 }
 
@@ -445,14 +581,14 @@
   justify-content: center;
   min-height: 60vh;
   gap: 16px;
-  color: #888;
+  color: #666;
 }
 
 .ad-loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(231, 76, 60, 0.2);
-  border-top-color: #e74c3c;
+  border: 3px solid rgba(139, 109, 75, 0.2);
+  border-top-color: #8b6d4b;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -477,66 +613,56 @@
 @media (max-width: 1024px) {
   .ad-content-wrapper {
     grid-template-columns: 1fr;
-    padding: 0 24px 48px;
+    padding: 30px;
   }
 
-  .ad-toc {
-    position: static;
-    margin-bottom: 16px;
+  .ad-hero-content,
+  .ad-stats-bar,
+  .ad-comments-section {
+    padding-left: 30px;
+    padding-right: 30px;
   }
+}
 
+@media (max-width: 768px) {
   .ad-hero {
-    height: 360px;
+    padding: 30px 0;
+  }
+
+  .ad-hero-content {
+    padding: 0 20px;
   }
 
   .ad-hero-title {
     font-size: 1.8rem;
   }
 
-  .ad-hero-content,
-  .ad-stats-bar,
-  .ad-comments-section {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-}
-
-@media (max-width: 768px) {
-  .ad-hero {
-    height: 280px;
-  }
-
-  .ad-hero-content {
-    padding: 24px;
-  }
-
-  .ad-hero-title {
-    font-size: 1.4rem;
-  }
-
   .ad-hero-meta {
     font-size: 0.8rem;
-    gap: 12px;
+    gap: 16px;
   }
 
   .ad-stats-bar {
     flex-direction: column;
-    transform: translateY(-12px);
-    margin-left: 16px;
-    margin-right: 16px;
-    padding: 0;
+    gap: 0;
+    padding: 0 20px;
   }
 
   .ad-stat,
   .ad-stat-btn {
-    padding: 14px;
-    justify-content: flex-start;
+    padding: 12px 16px;
+    border-right: none;
+    border-bottom: 1px solid #e0ddd8;
+  }
+
+  .ad-stat:last-child,
+  .ad-stat-btn:last-child {
+    border-bottom: none;
   }
 
   .ad-content-wrapper,
   .ad-comments-section {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding: 24px 20px;
   }
 
   .ad-toc {
@@ -544,6 +670,54 @@
   }
 
   .ad-section-heading {
+    font-size: 1.35rem;
+  }
+
+  .adetails-main {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .ad-hero {
+    padding: 20px 0;
+  }
+
+  .ad-hero-content {
+    padding: 0 16px;
+  }
+
+  .ad-hero-title {
+    font-size: 1.4rem;
+  }
+
+  .ad-hero-meta {
+    font-size: 0.75rem;
+    gap: 12px;
+  }
+
+  .ad-content-wrapper,
+  .ad-comments-section {
+    padding: 16px;
+  }
+
+  .ad-back-btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  .ad-stat,
+  .ad-stat-btn {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .ad-section-heading {
     font-size: 1.2rem;
+    margin: 28px 0 16px;
+  }
+
+  .ad-paragraph {
+    font-size: 0.95rem;
   }
 }
