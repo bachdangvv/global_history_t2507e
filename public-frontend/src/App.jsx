@@ -31,7 +31,6 @@ function App() {
             <main className="main-content">
               <Routes>
                 <Route path="/" element={<Home sidebarOpen={sidebarOpen} />} />
-                <Route path="/submit" element={<CreateArticlePage sidebarOpen={sidebarOpen} />} />
                 <Route path="/articles/:id/edit" element={<EditArticlePage sidebarOpen={sidebarOpen} />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/article/:id" element={<ArticleDetail />} />
@@ -40,7 +39,7 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/submitarticle" element={<CreateArticlePage />} />
+                <Route path="/submit" element={<CreateArticlePage />} />
               </Routes>
             </main>
             <Footer />

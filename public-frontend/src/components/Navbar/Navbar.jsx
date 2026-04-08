@@ -72,7 +72,7 @@ const Navbar = ({ onToggleSidebar }) => {
 
           {user && (
             <a
-              href={config.getDashboardURL(config.dashboardPaths.createArticle)}
+              href="/submit"
               target="_blank"
               rel="noreferrer"
               className="write-article-btn"
