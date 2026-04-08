@@ -1,4 +1,7 @@
 import {
+  CalendarRange,
+  FilePenLine,
+  FolderTree,
   LayoutDashboard,
   Newspaper,
   Shapes,
@@ -22,6 +25,18 @@ const navItems = [
     icon: Newspaper,
   },
   {
+    to: "/admin/edits",
+    label: "Edits",
+    description: "Approve or reject pending edits",
+    icon: FilePenLine,
+  },
+  {
+    to: "/admin/topics",
+    label: "Topics",
+    description: "Knowledge graph taxonomy",
+    icon: FolderTree,
+  },
+  {
     to: "/admin/categories",
     label: "Categories",
     description: "Editorial structure",
@@ -32,6 +47,12 @@ const navItems = [
     label: "Tags",
     description: "Reusable labels",
     icon: Tags,
+  },
+  {
+    to: "/admin/events",
+    label: "Events",
+    description: "Historical event records",
+    icon: CalendarRange,
   },
   {
     to: "/admin/users",
@@ -47,7 +68,7 @@ export default function AdminSidebar() {
       <div className="admin-brand">
         <p className="admin-brand-eyebrow">Global History</p>
         <h1>Admin Console</h1>
-        <p>Content operations, taxonomy, and user administration.</p>
+        <p>Content operations, moderation, taxonomy, events, and contributor administration.</p>
       </div>
 
       <nav className="admin-nav" aria-label="Admin navigation">

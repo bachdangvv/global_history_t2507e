@@ -4,10 +4,13 @@ import AdminTable from "../../components/admin/AdminTable";
 import { adminApi, USER_ROLE_OPTIONS } from "../../services/api";
 
 function formatDate(value) {
+  if (!value) return "Never";
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return "Never";
   return new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(new Date(value));
+  }).format(d);
 }
 
 export default function UsersPage() {
@@ -41,7 +44,7 @@ export default function UsersPage() {
 
     return users.filter(
       (user) =>
-        user.name.toLowerCase().includes(keyword) || user.email.toLowerCase().includes(keyword),
+        user.username.toLowerCase().includes(keyword) || user.email.toLowerCase().includes(keyword),
     );
   }, [users, query]);
 
@@ -51,7 +54,7 @@ export default function UsersPage() {
       header: "User",
       render: (user) => (
         <div className="table-primary">
-          <strong>{user.name}</strong>
+          <strong>{user.username}</strong>
           <p>{user.email}</p>
         </div>
       ),
@@ -79,10 +82,10 @@ export default function UsersPage() {
       render: (user) => (
         <span
           className={`status-badge ${
-            user.isLocked ? "status-badge-danger" : "status-badge-success"
+            user.is_locked ? "status-badge-danger" : "status-badge-success"
           }`}
         >
-          {user.isLocked ? "Locked" : "Active"}
+          {user.is_locked ? "Locked" : "Active"}
         </span>
       ),
     },
@@ -91,9 +94,17 @@ export default function UsersPage() {
       header: "Articles",
     },
     {
-      key: "lastActive",
+      key: "editCount",
+      header: "Edits",
+    },
+    {
+      key: "pendingEditCount",
+      header: "Pending",
+    },
+    {
+      key: "last_active_at",
       header: "Last active",
-      render: (user) => formatDate(user.lastActive),
+      render: (user) => formatDate(user.last_active_at),
     },
     {
       key: "actions",
@@ -104,8 +115,8 @@ export default function UsersPage() {
           className="button button-secondary button-small"
           onClick={() => handleToggleLock(user.id)}
         >
-          {user.isLocked ? <Unlock size={16} /> : <Lock size={16} />}
-          {user.isLocked ? "Unlock" : "Lock"}
+          {user.is_locked ? <Unlock size={16} /> : <Lock size={16} />}
+          {user.is_locked ? "Unlock" : "Lock"}
         </button>
       ),
     },
@@ -117,7 +128,7 @@ export default function UsersPage() {
         <div>
           <p className="section-kicker">Users management</p>
           <h1>Users</h1>
-          <p>Review account activity, adjust roles, and lock or unlock access when needed.</p>
+          <p>Review contributor activity, switch admin access, and lock or unlock accounts when needed.</p>
         </div>
       </section>
 
@@ -126,7 +137,7 @@ export default function UsersPage() {
           <input
             className="toolbar-search"
             type="search"
-            placeholder="Search user by name or email"
+            placeholder="Search user by username or email"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
@@ -136,7 +147,7 @@ export default function UsersPage() {
           columns={columns}
           rows={filteredUsers}
           emptyTitle="No users found"
-          emptyText="Try a different search term or add mock users to the API service."
+          emptyText="Try a different search term or add more contributors to the schema store."
         />
       </section>
     </div>

@@ -1,36 +1,34 @@
 /* =========================================
-   GLOBAL VARIABLES
+   GLOBAL VARIABLES & THEME (Premium Light)
    ========================================= */
 :root {
-  /* Color Palette - Classic & Deep */
-  /* Main Background & Structure */
-  --bg-color: #f7f4ea;       /* A warm, paper-like cream/ivory color */
-  --header-footer-bg: #2c2c2c; /* The dark charcoal used for the Navbar and Footer */
+  /* Premium Museum Light Theme Variables */
+  --bg-color: #faf9f6; /* Off-white, paper-like background */
+  --surface-color: #ffffff; /* Pure white for cards */
+  --header-footer-bg: #EAE6DB; /* Soft warm gray/beige for structure */
   
   /* Typography */
-  --text-main: #424242;      /* A softer dark gray for comfortable reading on cream */
-  --text-heading: #111111;   /* Near-black for sharp, authoritative headings */
+  --text-main: #333333; /* Deep charcoal for high readability on light */
+  --text-secondary: #666666; /* Softer gray for subtitles */
+  --text-heading: #1a1a1a; /* Almost black for strong headings */
   
   /* Layout Variables */
-  --sidebar-width: 250px;
+  --sidebar-width: 260px;
   --transition-speed: 0.3s;
   
-  /* Buttons & Interactions (Replacing the bright blue) */
-  --primary-accent: #2c2c2c; /* Uses the dark header color for primary buttons (like 'Login') */
-  --primary-hover: #404040;  /* Slightly lighter charcoal for button hover states */
+  /* Accents */
+  --primary-color: #8b6d4b; /* Antique gold/bronze accent */
+  --primary-hover: #735939; /* Darker bronze */
+  --secondary-accent: #304d6d; /* Deep nautical blue for contrast */
   
-  /* UI Elements (Extracted directly from your image) */
-  --border-light: #e0dcd0;   /* Subtle borders for the cards and search bar */
-  --success-green: #28a745;  /* The bold green used for the upvote arrow and 'ĐÃ KIỂM DUYỆT' badge */
-  --success-red: #dc3545;
-  
-  /* Diff Viewer Colors (For the Top Upvote Revision block) */
-  --diff-add-bg: #e6ffed;    /* Light green background for [+] rows */
-  --diff-remove-bg: #ffeef0; /* Light pink/red background for [-] rows */
+  /* UI Elements */
+  --border-light: rgba(0,0,0,0.08); /* Very subtle borders */
+  --glass-shadow: rgba(0,0,0,0.05); /* Soft drop shadow */
+  --card-shadow: 0 10px 30px rgba(0,0,0,0.04);
   
   /* Fonts */
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-heading: 'Merriweather', 'Georgia', serif; /* A classic serif for a history site */
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-heading: 'Merriweather', 'Georgia', serif;
 }
 
 /* =========================================
@@ -43,7 +41,6 @@
 }
 
 html {
-  /* Let browser handle height naturally */
   -webkit-text-size-adjust: 100%;
 }
 
@@ -57,8 +54,6 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Ensure mobile can scroll naturally */
-  -webkit-overflow-scrolling: touch;
 }
 
 /* Base Typography */
@@ -71,18 +66,38 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: var(--primary-accent);
+  color: var(--primary-color);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color var(--transition-speed) ease;
 }
 
 a:hover {
   color: var(--primary-hover);
 }
 
-/* Make images responsive by default */
 img {
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+/* Generic Utilities */
+.section-header {
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.premium-card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
 }

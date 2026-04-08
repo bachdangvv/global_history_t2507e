@@ -1,83 +1,170 @@
-/* Sidebar: part of the grid on desktop, scrolls with page.
-   On mobile: slides in as a fixed overlay. */
-
 .sidebar-container {
-  width: var(--sidebar-width);
-  padding: 20px 0;
+  height: 100%;
+  padding: 20px;
+  background-color: var(--surface-color);
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-color);
-  border-right: 1px solid var(--border-light);
-}
-
-/* Mobile: sidebar becomes a fixed overlay */
-@media (max-width: 900px) {
-  .sidebar-container {
-    position: fixed;
-    top: 60px;
-    left: 0;
-    height: calc(100vh - 60px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    z-index: 1000;
-    transform: translateX(-100%);
-    visibility: hidden;
-    pointer-events: none;
-    transition: transform var(--transition-speed) ease,
-                visibility 0s linear var(--transition-speed);
-    box-shadow: none;
-    padding-bottom: 80px;
-  }
-
-  .sidebar-container.open {
-    transform: translateX(0);
-    visibility: visible;
-    pointer-events: auto;
-    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
-    transition: transform var(--transition-speed) ease,
-                visibility 0s linear 0s;
-  }
+  gap: 20px;
+  overflow-y: auto;
 }
 
 .sidebar-section {
-  padding: 0 20px;
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-header-wrapper {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.sidebar-title-btn {
+  background: none;
+  border: none;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sidebar-title-btn:hover {
+  transform: translateX(4px);
+}
+
+.sidebar-toggle-icon {
+  display: inline-flex;
+  font-size: 0.8rem;
+  color: var(--primary-color);
+  transition: transform 0.2s;
+  width: 16px;
 }
 
 .sidebar-title {
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  color: var(--text-main);
-  letter-spacing: 1px;
-  margin-bottom: 10px;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--text-heading);
+  margin: 0;
+  font-weight: 600;
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
 }
 
 .sidebar-item {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: var(--text-heading);
+  flex-direction: column;
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: var(--text-main);
   text-decoration: none;
-  font-size: 0.95rem;
-  transition: background-color 0.2s ease;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  background: var(--bg-color);
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  overflow: hidden;
 }
 
-.sidebar-item:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: var(--text-heading);
+.sidebar-topic-item {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  border-radius: 12px;
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  background: var(--bg-color);
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.item-main,
+.topic-main {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 2;
 }
 
 .sidebar-icon {
-  font-size: 1.2rem;
+  margin-right: 12px;
+  font-size: 1.1rem;
   width: 24px;
   text-align: center;
+}
+
+.sidebar-name {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+}
+
+/* Tooltip Hover Redesign */
+.item-tooltip,
+.topic-tooltip {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 0;
+}
+
+.sidebar-item:hover,
+.sidebar-topic-item:hover {
+  background-color: var(--surface-color);
+  border-color: var(--primary-color);
+  box-shadow: 0 8px 20px rgba(139, 109, 75, 0.1);
+  transform: translateY(-2px);
+}
+
+.sidebar-item:hover .item-tooltip,
+.sidebar-topic-item:hover .topic-tooltip {
+  max-height: 120px;
+  opacity: 1;
+  margin-top: 10px;
+}
+
+.item-desc,
+.topic-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0 0 8px 0;
+}
+
+.tooltip-action {
+  font-size: 0.75rem;
+  color: var(--primary-color);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 900px) {
+  .sidebar-container {
+    position: fixed;
+    top: 50px;
+    left: -320px; 
+    width: var(--sidebar-width);
+    bottom: 0;
+    z-index: 1000;
+    box-shadow: var(--card-shadow);
+    transition: left 0.3s ease;
+    border-right: 1px solid var(--border-light);
+  }
+
+  .sidebar-wrapper.open .sidebar-container {
+    left: 0;
+  }
 }

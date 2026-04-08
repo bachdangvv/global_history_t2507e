@@ -15,13 +15,19 @@ export default function NotificationsPage() {
     userApi.getNotifications().then(setNotifications);
   }, []);
 
+  async function handleMarkRead(notificationId) {
+    await userApi.markNotificationRead(notificationId);
+    const refreshed = await userApi.getNotifications();
+    setNotifications(refreshed);
+  }
+
   return (
     <div className="page-shell">
       <section className="page-hero user-hero">
         <div>
           <p className="section-kicker">Notifications</p>
           <h1>Recent updates</h1>
-          <p>Track approvals, votes, and revision activity related to your content.</p>
+          <p>Track moderation results, vote activity, and other events attached to your account.</p>
         </div>
       </section>
 
@@ -33,17 +39,32 @@ export default function NotificationsPage() {
                 <div>
                   <h3>{notification.title}</h3>
                   <p>{notification.message}</p>
+                  <small>
+                    Triggered by {notification.actorName} • {formatDate(notification.created_at)}
+                  </small>
                 </div>
                 <div className="stack-row-meta">
-                  <span className="status-badge status-badge-neutral">{notification.type}</span>
-                  <small>{formatDate(notification.createdAt)}</small>
+                  <span className={`status-badge ${notification.is_read ? "status-badge-neutral" : "status-badge-warning"}`}>
+                    {notification.related_type}
+                  </span>
+                  {!notification.is_read ? (
+                    <button
+                      type="button"
+                      className="button button-secondary button-small"
+                      onClick={() => handleMarkRead(notification.id)}
+                    >
+                      Mark as read
+                    </button>
+                  ) : (
+                    <small>{formatDate(notification.created_at)}</small>
+                  )}
                 </div>
               </article>
             ))
           ) : (
             <div className="table-empty-state">
               <h3>No notifications</h3>
-              <p>Approvals, votes, and edits will appear here once there is activity.</p>
+              <p>Approvals, votes, and edit activity will appear here once there is activity.</p>
             </div>
           )}
         </div>

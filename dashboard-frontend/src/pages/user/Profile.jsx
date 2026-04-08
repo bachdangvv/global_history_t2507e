@@ -12,16 +12,21 @@ function formatDate(value) {
 export default function ProfilePage() {
   const [profile, setProfile] = useState(null);
   const [articles, setArticles] = useState([]);
-  const [revisions, setRevisions] = useState([]);
+  const [edits, setEdits] = useState([]);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    Promise.all([userApi.getProfile(), userApi.getMyArticles(), userApi.getMyRevisions()]).then(
-      ([profileData, articleList, revisionList]) => {
-        setProfile(profileData);
-        setArticles(articleList);
-        setRevisions(revisionList);
-      },
-    );
+    Promise.all([
+      userApi.getProfile(),
+      userApi.getMyArticles(),
+      userApi.getMyEdits(),
+      userApi.getMyComments(),
+    ]).then(([profileData, articleList, editList, commentList]) => {
+      setProfile(profileData);
+      setArticles(articleList);
+      setEdits(editList);
+      setComments(commentList);
+    });
   }, []);
 
   if (!profile) {
@@ -33,9 +38,9 @@ export default function ProfilePage() {
       <section className="page-hero user-hero">
         <div>
           <p className="section-kicker">Profile page</p>
-          <h1>{profile.name}</h1>
+          <h1>{profile.username}</h1>
           <p>
-            {profile.articleCount} articles authored and {profile.revisionCount} revisions submitted.
+            {profile.articleCount} articles, {profile.editCount} edits, and {profile.pendingEditCount} edits waiting for review.
           </p>
         </div>
       </section>
@@ -45,15 +50,13 @@ export default function ProfilePage() {
           <div className="panel-heading">
             <div>
               <p className="section-kicker">Your articles</p>
-              <h2>Written articles</h2>
-              <p>Articles currently associated with your account.</p>
+              <h2>Authored articles</h2>
+              <p>Article rows where `author_id` matches your account.</p>
             </div>
           </div>
           <div className="article-grid article-grid-profile">
             {articles.length ? (
-              articles.map((article) => (
-                <ArticleCard key={article.id} article={article} showEdit />
-              ))
+              articles.map((article) => <ArticleCard key={article.id} article={article} showEdit />)
             ) : (
               <div className="table-empty-state">
                 <h3>No authored articles</h3>
@@ -66,33 +69,66 @@ export default function ProfilePage() {
         <section className="panel-card">
           <div className="panel-heading">
             <div>
-              <p className="section-kicker">Revision history</p>
-              <h2>Submitted revisions</h2>
-              <p>Recent edits and new article submissions awaiting review.</p>
+              <p className="section-kicker">Edit history</p>
+              <h2>Submitted edits</h2>
+              <p>Recent `edits` rows created by your account.</p>
             </div>
           </div>
           <div className="stack-list">
-            {revisions.length ? (
-              revisions.map((revision) => (
-                <article key={revision.id} className="stack-row">
+            {edits.length ? (
+              edits.map((edit) => (
+                <article key={edit.id} className="stack-row">
                   <div>
-                    <h3>{revision.title}</h3>
-                    <p>{revision.editSummary}</p>
+                    <h3>{edit.title}</h3>
+                    <p>{edit.summary}</p>
                   </div>
                   <div className="stack-row-meta">
-                    <span className="status-badge status-badge-warning">{revision.status}</span>
-                    <small>{formatDate(revision.createdAt)}</small>
+                    <span className={`status-badge ${edit.status === "approved" ? "status-badge-success" : "status-badge-warning"}`}>
+                      {edit.status}
+                    </span>
+                    <small>{formatDate(edit.created_at)}</small>
                   </div>
                 </article>
               ))
             ) : (
               <div className="table-empty-state">
-                <h3>No revisions yet</h3>
-                <p>Your revision history will appear here once you submit edits.</p>
+                <h3>No edits yet</h3>
+                <p>Your edit history will appear here once you submit updates.</p>
               </div>
             )}
           </div>
         </section>
+      </section>
+
+      <section className="panel-card">
+        <div className="panel-heading">
+          <div>
+            <p className="section-kicker">Comment history</p>
+            <h2>Your recent comments</h2>
+            <p>Comments tied to your account across article and edit discussions.</p>
+          </div>
+        </div>
+        <div className="stack-list">
+          {comments.length ? (
+            comments.map((comment) => (
+              <article key={comment.id} className="stack-row">
+                <div>
+                  <h3>{comment.commentable_type === "edit" ? "Edit comment" : "Article comment"}</h3>
+                  <p>{comment.content}</p>
+                </div>
+                <div className="stack-row-meta">
+                  <span className="status-badge status-badge-neutral">{comment.commentable_type}</span>
+                  <small>{formatDate(comment.created_at)}</small>
+                </div>
+              </article>
+            ))
+          ) : (
+            <div className="table-empty-state">
+              <h3>No comments yet</h3>
+              <p>Your recent discussion activity will appear here.</p>
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );

@@ -1,757 +1,403 @@
-export const USER_ROLE_OPTIONS = ["Admin", "Editor", "Moderator", "Contributor"];
+import axios from 'axios';
 
-const ARTICLE_STATUSES = ["published", "review", "draft", "archived"];
+const api = axios.create({
+  baseURL: 'http://localhost:8080/api',
+  timeout: 10000,
+  headers: { 'Content-Type': 'application/json' },
+});
 
-let idSeed = 1200;
+// Attach token dynamically
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
-function clone(value) {
-  return JSON.parse(JSON.stringify(value));
-}
-
-function wait(value, ms = 120) {
-  return new Promise((resolve) => {
-    window.setTimeout(() => resolve(clone(value)), ms);
-  });
-}
-
-function buildId(prefix) {
-  idSeed += 1;
-  return `${prefix}-${idSeed}`;
-}
-
-function formatIso(value) {
-  return new Date(value).toISOString();
-}
-
-const store = {
-  categories: [
-    {
-      id: "cat-history",
-      name: "History",
-      description: "Long-form historical essays and contextual museum research.",
-    },
-    {
-      id: "cat-artifact",
-      name: "Artifacts",
-      description: "Object records, provenance notes, and conservation-backed stories.",
-    },
-    {
-      id: "cat-art",
-      name: "Art",
-      description: "Artwork interpretation, curatorial narratives, and exhibition text.",
-    },
-    {
-      id: "cat-architecture",
-      name: "Architecture",
-      description: "Buildings, heritage spaces, and site-based documentation.",
-    },
-  ],
-  tags: [
-    {
-      id: "tag-curation",
-      name: "Curation",
-      description: "Editorial and curatorial framing for public-facing interpretation.",
-    },
-    {
-      id: "tag-ritual",
-      name: "Ritual Practice",
-      description: "Ceremonial use, symbolism, and social meaning.",
-    },
-    {
-      id: "tag-ceramics",
-      name: "Ceramics",
-      description: "Kilns, glaze, restoration, and court production.",
-    },
-    {
-      id: "tag-trade",
-      name: "Trade Networks",
-      description: "Exchange routes, circulation, and cultural transfer.",
-    },
-    {
-      id: "tag-conservation",
-      name: "Conservation",
-      description: "Preservation methods, material care, and condition reporting.",
-    },
-    {
-      id: "tag-cartography",
-      name: "Cartography",
-      description: "Maps, boundaries, and visual knowledge systems.",
-    },
-  ],
-  countries: [
-    { id: "country-vn", name: "Vietnam" },
-    { id: "country-cn", name: "China" },
-    { id: "country-jp", name: "Japan" },
-    { id: "country-fr", name: "France" },
-    { id: "country-it", name: "Italy" },
-  ],
-  users: [
-    {
-      id: "usr-001",
-      name: "Ava Nguyen",
-      email: "ava.nguyen@example.com",
-      role: "Admin",
-      isLocked: false,
-      lastActive: formatIso("2026-03-25T08:32:00+07:00"),
-    },
-    {
-      id: "usr-002",
-      name: "Liam Pham",
-      email: "liam.pham@example.com",
-      role: "Editor",
-      isLocked: false,
-      lastActive: formatIso("2026-03-25T07:50:00+07:00"),
-    },
-    {
-      id: "usr-003",
-      name: "Mia Le",
-      email: "mia.le@example.com",
-      role: "Moderator",
-      isLocked: false,
-      lastActive: formatIso("2026-03-24T18:15:00+07:00"),
-    },
-    {
-      id: "usr-004",
-      name: "Noah Tran",
-      email: "noah.tran@example.com",
-      role: "Contributor",
-      isLocked: false,
-      lastActive: formatIso("2026-03-24T15:45:00+07:00"),
-    },
-    {
-      id: "usr-005",
-      name: "Emma Sato",
-      email: "emma.sato@example.com",
-      role: "Contributor",
-      isLocked: true,
-      lastActive: formatIso("2026-03-22T20:10:00+07:00"),
-    },
-  ],
-  articles: [
-    {
-      id: "art-1001",
-      title: "Dong Son Bronze Drum Collection",
-      summary:
-        "A survey of ceremonial bronze drums, their iconography, and the evolution of casting methods across northern Vietnam.",
-      content:
-        "This article traces the material culture of Dong Son bronze drums with emphasis on ritual use, regional circulation, and the symbolic meaning of starburst motifs in museum interpretation.",
-      categoryId: "cat-artifact",
-      tagIds: ["tag-curation", "tag-ritual"],
-      authorId: "usr-002",
-      country: "Vietnam",
-      status: "published",
-      likes: 428,
-      dislikes: 14,
-      updatedAt: formatIso("2026-03-24T09:15:00+07:00"),
-      publishedAt: formatIso("2026-02-20T09:00:00+07:00"),
-    },
-    {
-      id: "art-1002",
-      title: "Imperial Ceramics of Hue",
-      summary:
-        "A curatorial overview of court ceramics, workshop production, and royal symbolism in the Nguyen era.",
-      content:
-        "The article maps glaze palettes, inscriptions, and restoration observations from pieces held in the imperial collection, alongside archival notes from court-managed kilns.",
-      categoryId: "cat-art",
-      tagIds: ["tag-ceramics", "tag-curation"],
-      authorId: "usr-003",
-      country: "Vietnam",
-      status: "review",
-      likes: 311,
-      dislikes: 12,
-      updatedAt: formatIso("2026-03-22T11:20:00+07:00"),
-      publishedAt: formatIso("2026-01-28T07:10:00+07:00"),
-    },
-    {
-      id: "art-1003",
-      title: "Silk Road Trade Routes",
-      summary:
-        "An illustrated history of trade corridors, material exchange, and the movement of artistic motifs across Asia.",
-      content:
-        "This feature connects trade itineraries with ceramics, textiles, and manuscripts that moved between imperial courts, port cities, and inland exchange networks.",
-      categoryId: "cat-history",
-      tagIds: ["tag-trade", "tag-cartography"],
-      authorId: "usr-004",
-      country: "China",
-      status: "published",
-      likes: 502,
-      dislikes: 20,
-      updatedAt: formatIso("2026-03-18T15:35:00+07:00"),
-      publishedAt: formatIso("2026-01-11T06:45:00+07:00"),
-    },
-    {
-      id: "art-1004",
-      title: "Japanese Folding Screens",
-      summary:
-        "Notes on narrative screens, lacquer framing, and conservation concerns in Edo-period collections.",
-      content:
-        "The draft compares screen painting techniques, handling protocols, and the challenge of translating sequential imagery for online audiences.",
-      categoryId: "cat-art",
-      tagIds: ["tag-conservation", "tag-curation"],
-      authorId: "usr-005",
-      country: "Japan",
-      status: "draft",
-      likes: 156,
-      dislikes: 5,
-      updatedAt: formatIso("2026-03-15T13:15:00+07:00"),
-      publishedAt: "",
-    },
-    {
-      id: "art-1005",
-      title: "Colonial Maps of Indochina",
-      summary:
-        "A research feature on cartographic power, territorial naming, and how maps shape public memory.",
-      content:
-        "The article reviews survey maps, annotation systems, and the politics of archival presentation inside colonial-era collections and public history spaces.",
-      categoryId: "cat-history",
-      tagIds: ["tag-cartography", "tag-trade"],
-      authorId: "usr-001",
-      country: "France",
-      status: "published",
-      likes: 267,
-      dislikes: 18,
-      updatedAt: formatIso("2026-03-10T09:05:00+07:00"),
-      publishedAt: formatIso("2025-12-04T04:30:00+07:00"),
-    },
-    {
-      id: "art-1006",
-      title: "Royal Court Music Instruments",
-      summary:
-        "A working draft about ceremonial ensembles, instrument construction, and royal performance traditions.",
-      content:
-        "The current draft outlines naming conventions, instrument groups, and conservation notes from palace collections, with a focus on performance context.",
-      categoryId: "cat-artifact",
-      tagIds: ["tag-ritual", "tag-conservation"],
-      authorId: "usr-004",
-      country: "Vietnam",
-      status: "review",
-      likes: 198,
-      dislikes: 7,
-      updatedAt: formatIso("2026-03-25T07:05:00+07:00"),
-      publishedAt: "",
-    },
-  ],
-  currentUserId: "usr-004",
-  revisions: [
-    {
-      id: "rev-2001",
-      articleId: "art-1003",
-      title: "Silk Road Trade Routes",
-      content:
-        "Expanded the section on maritime links and added more context on exchange through Southeast Asian ports.",
-      categoryId: "cat-history",
-      country: "China",
-      editSummary: "Expanded maritime trade context.",
-      status: "pending",
-      authorId: "usr-004",
-      createdAt: formatIso("2026-03-24T11:00:00+07:00"),
-    },
-    {
-      id: "rev-2002",
-      articleId: "art-1006",
-      title: "Royal Court Music Instruments",
-      content:
-        "Added glossary notes for instrument families and clarified ceremonial performance order in the palace setting.",
-      categoryId: "cat-artifact",
-      country: "Vietnam",
-      editSummary: "Added glossary terms and performance order.",
-      status: "pending",
-      authorId: "usr-004",
-      createdAt: formatIso("2026-03-23T14:20:00+07:00"),
-    },
-  ],
-  articleVotes: [
-    {
-      id: "vote-001",
-      articleId: "art-1001",
-      userId: "usr-004",
-      voteType: "like",
-      createdAt: formatIso("2026-03-24T10:30:00+07:00"),
-    },
-  ],
-  notifications: [
-    {
-      id: "note-001",
-      userId: "usr-004",
-      title: "Article approved",
-      message: "Your latest update to Silk Road Trade Routes was approved by the editorial team.",
-      type: "approval",
-      createdAt: formatIso("2026-03-24T13:00:00+07:00"),
-      read: false,
-    },
-    {
-      id: "note-002",
-      userId: "usr-004",
-      title: "New vote received",
-      message: "A reader reacted to Royal Court Music Instruments.",
-      type: "vote",
-      createdAt: formatIso("2026-03-23T17:40:00+07:00"),
-      read: false,
-    },
-    {
-      id: "note-003",
-      userId: "usr-004",
-      title: "Article updated by collaborator",
-      message: "A collaborator suggested changes for Silk Road Trade Routes.",
-      type: "revision",
-      createdAt: formatIso("2026-03-22T09:20:00+07:00"),
-      read: true,
-    },
-  ],
-};
-
-function getCategoryName(categoryId) {
-  return store.categories.find((item) => item.id === categoryId)?.name || "Unassigned";
-}
-
-function getUserName(userId) {
-  return store.users.find((item) => item.id === userId)?.name || "Unknown user";
-}
-
-function getCurrentUser() {
-  return store.users.find((item) => item.id === store.currentUserId) || store.users[0];
-}
-
-function getTagNames(tagIds = []) {
-  return tagIds
-    .map((tagId) => store.tags.find((tag) => tag.id === tagId)?.name)
-    .filter(Boolean);
-}
-
-function getArticleCountByCategory(categoryId) {
-  return store.articles.filter((article) => article.categoryId === categoryId).length;
-}
-
-function getArticleCountByTag(tagId) {
-  return store.articles.filter((article) => article.tagIds.includes(tagId)).length;
-}
-
-function getArticleCountByAuthor(authorId) {
-  return store.articles.filter((article) => article.authorId === authorId).length;
-}
-
-function decorateArticle(article) {
-  const currentVote = store.articleVotes.find(
-    (vote) => vote.articleId === article.id && vote.userId === store.currentUserId,
-  );
-
-  return {
-    ...article,
-    categoryName: getCategoryName(article.categoryId),
-    tagNames: getTagNames(article.tagIds),
-    authorName: getUserName(article.authorId),
-    reactionTotal: Number(article.likes || 0) + Number(article.dislikes || 0),
-    currentUserVote: currentVote?.voteType || "",
-  };
-}
-
-function decorateRevision(revision) {
-  return {
-    ...revision,
-    authorName: getUserName(revision.authorId),
-    categoryName: getCategoryName(revision.categoryId),
-  };
-}
-
-function getSortedArticles() {
-  return store.articles
-    .map((article) => decorateArticle(article))
-    .sort((left, right) => new Date(right.updatedAt).getTime() - new Date(left.updatedAt).getTime());
-}
-
-function getMonthlyTrend() {
-  const formatter = new Intl.DateTimeFormat("en-US", { month: "short" });
-  const anchor = new Date("2026-03-25T09:00:00+07:00");
-  const months = [];
-
-  for (let offset = 5; offset >= 0; offset -= 1) {
-    const date = new Date(anchor.getFullYear(), anchor.getMonth() - offset, 1);
-    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-    months.push({
-      key,
-      month: formatter.format(date),
-      articles: 0,
-    });
-  }
-
-  store.articles.forEach((article) => {
-    const date = new Date(article.updatedAt);
-    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-    const bucket = months.find((item) => item.key === key);
-
-    if (bucket) {
-      bucket.articles += 1;
-    }
-  });
-
-  return months.map(({ key, ...item }) => item);
-}
-
-function buildDashboardOverview() {
-  const articles = getSortedArticles();
-  const totalReactions = articles.reduce(
-    (sum, article) => sum + Number(article.likes || 0) + Number(article.dislikes || 0),
-    0,
-  );
-
-  return {
-    stats: {
-      totalUsers: store.users.length,
-      totalArticles: store.articles.length,
-      totalCategories: store.categories.length,
-      totalTags: store.tags.length,
-      totalReactions,
-    },
-    articleStatus: ARTICLE_STATUSES.map((status) => ({
-      name: status[0].toUpperCase() + status.slice(1),
-      value: store.articles.filter((article) => article.status === status).length,
-    })),
-    categoryBreakdown: store.categories.map((category) => ({
-      name: category.name,
-      articles: getArticleCountByCategory(category.id),
-    })),
-    monthlyActivity: getMonthlyTrend(),
-    recentArticles: articles.slice(0, 5),
-  };
-}
-
-function listCategories() {
-  return store.categories
-    .map((category) => ({
-      ...category,
-      articleCount: getArticleCountByCategory(category.id),
-    }))
-    .sort((left, right) => right.articleCount - left.articleCount || left.name.localeCompare(right.name));
-}
-
-function listTags() {
-  return store.tags
-    .map((tag) => ({
-      ...tag,
-      articleCount: getArticleCountByTag(tag.id),
-    }))
-    .sort((left, right) => right.articleCount - left.articleCount || left.name.localeCompare(right.name));
-}
-
-function listUsers() {
-  return store.users
-    .map((user) => ({
-      ...user,
-      articleCount: getArticleCountByAuthor(user.id),
-    }))
-    .sort((left, right) => left.name.localeCompare(right.name));
-}
-
-function findArticleOrThrow(articleId) {
-  const article = store.articles.find((item) => item.id === articleId);
-
-  if (!article) {
-    throw new Error("Article not found.");
-  }
-
-  return article;
-}
-
-function findCategoryOrThrow(categoryId) {
-  const category = store.categories.find((item) => item.id === categoryId);
-
-  if (!category) {
-    throw new Error("Category not found.");
-  }
-
-  return category;
-}
-
-function findTagOrThrow(tagId) {
-  const tag = store.tags.find((item) => item.id === tagId);
-
-  if (!tag) {
-    throw new Error("Tag not found.");
-  }
-
-  return tag;
-}
-
-function findUserOrThrow(userId) {
-  const user = store.users.find((item) => item.id === userId);
-
-  if (!user) {
-    throw new Error("User not found.");
-  }
-
-  return user;
-}
-
-function normalizeName(value, fallback) {
-  return String(value || fallback || "")
-    .trim()
-    .replace(/\s+/g, " ");
-}
-
-function sortByNewest(collection, key) {
-  return [...collection].sort(
-    (left, right) => new Date(right[key]).getTime() - new Date(left[key]).getTime(),
-  );
-}
-
-function createNotification(entry) {
-  const nextNotification = {
-    id: buildId("note"),
-    read: false,
-    createdAt: formatIso(new Date()),
-    ...entry,
-  };
-
-  store.notifications = [nextNotification, ...store.notifications];
-  return nextNotification;
-}
-
+/* ==============================================================
+   Admin API endpoints
+   ============================================================== */
 export const adminApi = {
-  async getDashboardOverview() {
-    return wait(buildDashboardOverview());
-  },
+  // ── Dashboard overview ─────────────────────────────────
+  getDashboardOverview: async () => {
+    // Fetch all data in parallel from the real backend endpoints
+    const [stats, articles, categories, topics, tags, events, users, pendingEdits] = await Promise.all([
+      api.get('/admin/dashboard').then(r => r.data).catch(() => null),
+      api.get('/admin/articles').then(r => r.data).catch(() => []),
+      api.get('/admin/categories').then(r => r.data).catch(() => []),
+      api.get('/admin/topics').then(r => r.data).catch(() => []),
+      api.get('/admin/tags').then(r => r.data).catch(() => []),
+      api.get('/historical-events').then(r => r.data).catch(() => []),
+      api.get('/admin/users').then(r => r.data).catch(() => []),
+      api.get('/admin/edits/pending').then(r => r.data).catch(() => []),
+    ]);
 
-  async getArticles() {
-    return wait(getSortedArticles());
-  },
+    // Calculate total reactions from articles
+    const totalReactions = articles.reduce((sum, a) => (sum + (a.likeCount || 0) + (a.dislikeCount || 0)), 0);
 
-  async getArticle(articleId) {
-    return wait(decorateArticle(findArticleOrThrow(articleId)));
-  },
+    // Build monthly activity chart (last 6 months)
+    const months = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const monthLabel = d.toLocaleString('default', { month: 'short' });
 
-  async deleteArticle(articleId) {
-    findArticleOrThrow(articleId);
-    store.articles = store.articles.filter((article) => article.id !== articleId);
-    return wait({ success: true });
-  },
+      // Count articles created in this month
+      const articleCount = articles.filter(a => {
+        if (!a.createdAt) return false;
+        const created = new Date(a.createdAt);
+        return created.getFullYear() === d.getFullYear() && created.getMonth() === d.getMonth();
+      }).length;
 
-  async getCategories() {
-    return wait(listCategories());
-  },
-
-  async createCategory(payload) {
-    const category = {
-      id: buildId("cat"),
-      name: normalizeName(payload.name, "New category"),
-      description: normalizeName(payload.description, ""),
-    };
-
-    store.categories = [category, ...store.categories];
-    return wait(category);
-  },
-
-  async updateCategory(categoryId, payload) {
-    const category = findCategoryOrThrow(categoryId);
-    category.name = normalizeName(payload.name, category.name);
-    category.description = normalizeName(payload.description, category.description);
-    return wait(category);
-  },
-
-  async deleteCategory(categoryId) {
-    findCategoryOrThrow(categoryId);
-    store.categories = store.categories.filter((category) => category.id !== categoryId);
-    store.articles = store.articles.map((article) =>
-      article.categoryId === categoryId
-        ? {
-            ...article,
-            categoryId: "",
-            updatedAt: formatIso(new Date()),
-          }
-        : article,
-    );
-    return wait({ success: true });
-  },
-
-  async getTags() {
-    return wait(listTags());
-  },
-
-  async createTag(payload) {
-    const tag = {
-      id: buildId("tag"),
-      name: normalizeName(payload.name, "New tag"),
-      description: normalizeName(payload.description, ""),
-    };
-
-    store.tags = [tag, ...store.tags];
-    return wait(tag);
-  },
-
-  async updateTag(tagId, payload) {
-    const tag = findTagOrThrow(tagId);
-    tag.name = normalizeName(payload.name, tag.name);
-    tag.description = normalizeName(payload.description, tag.description);
-    return wait(tag);
-  },
-
-  async deleteTag(tagId) {
-    findTagOrThrow(tagId);
-    store.tags = store.tags.filter((tag) => tag.id !== tagId);
-    store.articles = store.articles.map((article) =>
-      article.tagIds.includes(tagId)
-        ? {
-            ...article,
-            tagIds: article.tagIds.filter((item) => item !== tagId),
-            updatedAt: formatIso(new Date()),
-          }
-        : article,
-    );
-    return wait({ success: true });
-  },
-
-  async getUsers() {
-    return wait(listUsers());
-  },
-
-  async updateUserRole(userId, role) {
-    const user = findUserOrThrow(userId);
-    user.role = role;
-    return wait(user);
-  },
-
-  async toggleUserLock(userId) {
-    const user = findUserOrThrow(userId);
-    user.isLocked = !user.isLocked;
-    return wait(user);
-  },
-};
-
-export const userApi = {
-  async getArticles(filters = {}) {
-    const keyword = String(filters.keyword || "").trim().toLowerCase();
-    const category = String(filters.category || "").trim().toLowerCase();
-    const country = String(filters.country || "").trim().toLowerCase();
-
-    const results = getSortedArticles().filter((article) => {
-      const matchesPublished = article.status === "published";
-      const matchesKeyword = !keyword || article.title.toLowerCase().includes(keyword);
-      const matchesCategory =
-        !category || category === "all" || article.categoryName.toLowerCase() === category;
-      const matchesCountry =
-        !country || country === "all" || article.country.toLowerCase() === country;
-
-      return matchesPublished && matchesKeyword && matchesCategory && matchesCountry;
-    });
-
-    return wait(results);
-  },
-
-  async getArticle(articleId) {
-    return wait(decorateArticle(findArticleOrThrow(articleId)));
-  },
-
-  async voteArticle(articleId, voteType) {
-    const article = findArticleOrThrow(articleId);
-    const existingVote = store.articleVotes.find(
-      (vote) => vote.articleId === articleId && vote.userId === store.currentUserId,
-    );
-
-    if (existingVote?.voteType === "like") {
-      article.likes = Math.max(0, Number(article.likes || 0) - 1);
-    }
-
-    if (existingVote?.voteType === "dislike") {
-      article.dislikes = Math.max(0, Number(article.dislikes || 0) - 1);
-    }
-
-    if (existingVote) {
-      existingVote.voteType = voteType;
-      existingVote.createdAt = formatIso(new Date());
-    } else {
-      store.articleVotes.push({
-        id: buildId("vote"),
-        articleId,
-        userId: store.currentUserId,
-        voteType,
-        createdAt: formatIso(new Date()),
+      months.push({
+        key: monthKey,
+        month: monthLabel,
+        articles: articleCount,
+        edits: 0
       });
     }
 
-    if (voteType === "like") {
-      article.likes = Number(article.likes || 0) + 1;
-    } else {
-      article.dislikes = Number(article.dislikes || 0) + 1;
-    }
-
-    createNotification({
-      userId: store.currentUserId,
-      title: "Vote saved",
-      message: `Your ${voteType} vote for ${article.title} was recorded.`,
-      type: "vote",
+    // Build article status breakdown
+    const statusCounts = {};
+    articles.forEach(a => {
+      const s = a.status || 'unknown';
+      statusCounts[s] = (statusCounts[s] || 0) + 1;
     });
+    const articleStatus = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
 
-    return wait(decorateArticle(article));
-  },
+    // Build topic breakdown
+    const topicBreakdown = categories.map(c => ({
+      name: c.name || 'Unnamed',
+      articles: articles.filter(a => a.categoryId === c.id).length
+    }));
 
-  async createRevision(payload) {
-    const baseArticle = payload.articleId ? findArticleOrThrow(payload.articleId) : null;
-    const revision = {
-      id: buildId("rev"),
-      articleId: payload.articleId || buildId("article"),
-      title: normalizeName(payload.title, baseArticle?.title || "Untitled article"),
-      content: normalizeName(payload.content, baseArticle?.content || ""),
-      categoryId: payload.categoryId || baseArticle?.categoryId || "",
-      country: payload.country || baseArticle?.country || "",
-      editSummary: normalizeName(
-        payload.editSummary,
-        payload.articleId ? "Article update submitted." : "New article submitted.",
-      ),
-      status: "pending",
-      authorId: store.currentUserId,
-      createdAt: formatIso(new Date()),
+    return {
+      stats: {
+        totalUsers: stats?.totalUsers ?? users.length,
+        totalArticles: stats?.totalArticles ?? articles.length,
+        totalCategories: stats ? 0 : categories.length,
+        totalTags: tags.length,
+        totalEvents: stats?.totalEvents ?? events.length,
+        totalTopics: topics.length,
+        totalReactions,
+        pendingEdits: stats?.pendingEdits ?? pendingEdits.length,
+      },
+      articleStatus: articleStatus.length > 0 ? articleStatus : [{ name: 'No data', value: 0 }],
+      topicBreakdown,
+      monthlyActivity: months,
+      pendingEditQueue: pendingEdits.slice(0, 5).map(e => ({
+        id: e.id,
+        title: e.title,
+        summary: e.summary,
+        editable_type: e.editableType,
+        editorName: e.editorName,
+        created_at: e.createdAt,
+      })),
+      recentArticles: articles.slice(0, 5).map(a => ({
+        ...a,
+        topicNames: a.topics ? a.topics.map(t => t.name) : [a.categoryName || 'Uncategorized'],
+        pendingEditCount: 0,
+        updated_at: a.updatedAt || a.createdAt || new Date().toISOString(),
+      })),
+      recentNotifications: [],
+      eventHighlights: events.slice(0, 3).map(e => ({
+        id: e.id,
+        title: e.title,
+        summary: e.summary,
+        event_year: e.eventYear,
+        currentEditStatus: 'approved',
+      })),
     };
-
-    store.revisions = [revision, ...store.revisions];
-    createNotification({
-      userId: store.currentUserId,
-      title: "Revision submitted",
-      message: `${revision.title} is now waiting for admin review.`,
-      type: "revision",
-    });
-
-    return wait(decorateRevision(revision));
   },
 
-  async getMyArticles() {
-    const currentUser = getCurrentUser();
-    return wait(getSortedArticles().filter((article) => article.authorId === currentUser.id));
+  getArticles: async () => {
+    const { data } = await api.get('/admin/articles');
+    return (Array.isArray(data) ? data : []).map(a => ({
+      ...a,
+      // summary can be null → filter crashes on .toLowerCase()
+      summary: a.summary || '',
+      // topicNames must be a non-null array — filter uses .some()
+      topicNames: Array.isArray(a.topics) && a.topics.length > 0
+        ? a.topics.map(t => t.name)
+        : (a.categoryName ? [a.categoryName] : []),
+      // linkedEvents must be a non-null array — filter uses .some()
+      linkedEvents: [],
+      pendingEditCount: 0,
+      updated_at: a.updatedAt || a.createdAt || new Date().toISOString(),
+      like_count: a.likeCount || 0,
+      dislike_count: a.dislikeCount || 0,
+    }));
+  },
+  listArticles: async () => {
+    const { data } = await api.get('/admin/articles');
+    return Array.isArray(data) ? data : [];
+  },
+  updateArticleStatus: async (id, status) => {
+    const { data } = await api.put(`/admin/articles/${id}/status`, { status });
+    return data;
+  },
+  deleteArticle: async (id) => {
+    await api.delete(`/admin/articles/${id}`);
   },
 
-  async getMyRevisions() {
-    return wait(
-      sortByNewest(
-        store.revisions
-          .filter((revision) => revision.authorId === store.currentUserId)
-          .map((revision) => decorateRevision(revision)),
-        "createdAt",
-      ),
-    );
+  // ── Categories ─────────────────────────────────────────
+  getCategories: async () => {
+    const { data } = await api.get('/admin/categories');
+    return Array.isArray(data) ? data : [];
+  },
+  listCategories: async () => {
+    const { data } = await api.get('/admin/categories');
+    return Array.isArray(data) ? data : [];
+  },
+  createCategory: async (payload) => {
+    const { data } = await api.post('/admin/categories', payload);
+    return data;
+  },
+  updateCategory: async (id, payload) => {
+    const { data } = await api.put(`/admin/categories/${id}`, payload);
+    return data;
+  },
+  deleteCategory: async (id) => {
+    await api.delete(`/admin/categories/${id}`);
   },
 
-  async getNotifications() {
-    return wait(
-      sortByNewest(
-        store.notifications.filter((notification) => notification.userId === store.currentUserId),
-        "createdAt",
-      ),
-    );
+  // ── Topics ─────────────────────────────────────────────
+  getTopics: async () => {
+    const { data } = await api.get('/admin/topics');
+    return Array.isArray(data) ? data : [];
+  },
+  listTopics: async () => {
+    const { data } = await api.get('/admin/topics');
+    return Array.isArray(data) ? data : [];
+  },
+  createTopic: async (payload) => {
+    const { data } = await api.post('/admin/topics', payload);
+    return data;
+  },
+  updateTopic: async (id, payload) => {
+    const { data } = await api.put(`/admin/topics/${id}`, payload);
+    return data;
+  },
+  deleteTopic: async (id) => {
+    await api.delete(`/admin/topics/${id}`);
   },
 
-  async getProfile() {
-    const currentUser = getCurrentUser();
-
-    return wait({
-      ...currentUser,
-      articleCount: getArticleCountByAuthor(currentUser.id),
-      revisionCount: store.revisions.filter((revision) => revision.authorId === currentUser.id).length,
-    });
+  // ── Tags ───────────────────────────────────────────────
+  getTags: async () => {
+    const { data } = await api.get('/admin/tags');
+    return Array.isArray(data) ? data : [];
+  },
+  listTags: async () => {
+    const { data } = await api.get('/admin/tags');
+    return Array.isArray(data) ? data : [];
+  },
+  createTag: async (payload) => {
+    const { data } = await api.post('/admin/tags', payload);
+    return data;
+  },
+  updateTag: async (id, payload) => {
+    const { data } = await api.put(`/admin/tags/${id}`, payload);
+    return data;
+  },
+  deleteTag: async (id) => {
+    await api.delete(`/admin/tags/${id}`);
   },
 
-  async getCategories() {
-    return wait(listCategories());
+  // ── Historical Events ─────────────────────────────────
+  getEvents: async () => {
+    const { data } = await api.get('/historical-events');
+    return (Array.isArray(data) ? data : []).map(e => ({
+      ...e,
+      event_year: e.eventYear,
+      event_date: e.eventDate,
+      linkedArticleCount: 0,
+      topicCount: 0,
+      currentEditStatus: 'approved',
+    }));
+  },
+  listEvents: async () => {
+    const { data } = await api.get('/historical-events');
+    return Array.isArray(data) ? data : [];
+  },
+  createEvent: async (payload) => {
+    // Map frontend field names → backend DTO field names
+    const body = {
+      title: payload.title,
+      summary: payload.summary,
+      eventYear: payload.event_year ? Number(payload.event_year) : null,
+      eventDate: payload.event_date || null,
+      imageUrl: payload.imageUrl || null,
+    };
+    const { data } = await api.post('/admin/events', body);
+    return data;
+  },
+  updateEvent: async (id, payload) => {
+    const body = {
+      title: payload.title,
+      summary: payload.summary,
+      eventYear: payload.event_year ? Number(payload.event_year) : null,
+      eventDate: payload.event_date || null,
+      imageUrl: payload.imageUrl || null,
+    };
+    const { data } = await api.put(`/admin/events/${id}`, body);
+    return data;
+  },
+  deleteEvent: async (id) => {
+    await api.delete(`/admin/events/${id}`);
+  },
+  linkArticleToEvent: async (eventId, articleId) => {
+    // Placeholder — no backend endpoint for linking yet
+    console.warn('linkArticleToEvent: backend endpoint not yet implemented');
+    return {};
   },
 
-  async getCountries() {
-    return wait(store.countries);
+  // ── Users ──────────────────────────────────────────────
+  getUsers: async () => {
+    const { data } = await api.get('/admin/users');
+    return (Array.isArray(data) ? data : []).map(u => ({
+      ...u,
+      is_locked: u.isLocked || false,
+      last_active_at: u.lastActiveAt || u.createdAt || new Date().toISOString(),
+      articleCount: 0,
+      editCount: 0,
+      pendingEditCount: 0,
+    }));
+  },
+  listUsers: async () => {
+    const { data } = await api.get('/admin/users');
+    return Array.isArray(data) ? data : [];
+  },
+  updateUserRole: async (userId, role) => {
+    const { data } = await api.put(`/admin/users/${userId}/role`, { role });
+    return data;
+  },
+  toggleUserLock: async (userId) => {
+    const { data } = await api.post(`/admin/users/${userId}/toggle-lock`);
+    return data;
+  },
+
+  // ── Edits ──────────────────────────────────────────────
+  listEdits: async () => {
+    const { data } = await api.get('/admin/edits/pending');
+    return Array.isArray(data) ? data : [];
+  },
+  getPendingEdits: async () => {
+    const { data } = await api.get('/admin/edits/pending');
+    return (Array.isArray(data) ? data : []).map(e => ({
+      ...e,
+      editable_type: e.editableType,
+      upvote_count: e.upvoteCount || 0,
+      downvote_count: e.downvoteCount || 0,
+      created_at: e.createdAt,
+      baseRecord: null, // Would need an additional fetch per edit
+    }));
+  },
+  approveEdit: async (editId) => {
+    const { data } = await api.post(`/admin/edits/${editId}/approve`);
+    return data;
+  },
+  rejectEdit: async (editId) => {
+    const { data } = await api.post(`/admin/edits/${editId}/reject`);
+    return data;
   },
 };
+
+/* ==============================================================
+   User API endpoints (Contributor level functions)
+   ============================================================== */
+export const userApi = {
+  getHomePage: async () => {
+    const articles = await api.get('/articles/recommended').then(r => r.data).catch(() => []);
+    return {
+      stats: {
+        totalViews: 0,
+        totalLikes: articles.reduce((s, a) => s + (a.likeCount || 0), 0),
+        totalEdits: 0
+      },
+      recentArticles: articles.slice(0, 3)
+    };
+  },
+  listArticles: async () => {
+    const { data } = await api.get('/articles/search?q=');
+    return Array.isArray(data) ? data : [];
+  },
+  getArticles: async () => {
+    const { data } = await api.get('/articles/search?q=');
+    return Array.isArray(data) ? data : [];
+  },
+  getTopics: async () => {
+    const { data } = await api.get('/topics');
+    return Array.isArray(data) ? data : [];
+  },
+  getHistoricalEvents: async () => {
+    const { data } = await api.get('/historical-events');
+    return (Array.isArray(data) ? data : []).map(e => ({
+      ...e,
+      event_year: e.eventYear,
+      event_date: e.eventDate,
+      created_at: e.createdAt,
+    }));
+  },
+  getArticle: async (id) => {
+    const { data } = await api.get(`/articles/${id}`);
+    return data;
+  },
+  getMyArticles: async () => {
+    const { data } = await api.get('/user/my/articles');
+    return Array.isArray(data) ? data : [];
+  },
+  getMyEdits: async () => {
+    const { data } = await api.get('/user/my/edits');
+    return (Array.isArray(data) ? data : []).map(e => ({
+      ...e,
+      created_at: e.createdAt,
+      editable_type: e.editableType,
+      upvote_count: e.upvoteCount || 0,
+      downvote_count: e.downvoteCount || 0,
+    }));
+  },
+  getMyComments: async () => {
+    const { data } = await api.get('/user/my/comments');
+    return Array.isArray(data) ? data : [];
+  },
+  getNotifications: async () => {
+    const { data } = await api.get('/user/notifications');
+    return (Array.isArray(data) ? data : []).map(n => ({
+      ...n,
+      is_read: n.isRead || false,
+      related_type: n.relatedType,
+      created_at: n.createdAt,
+    }));
+  },
+  markNotificationRead: async (id) => {
+    const { data } = await api.post(`/user/notifications/${id}/read`);
+    return data;
+  },
+  getProfile: async () => {
+    const { data } = await api.get('/auth/me');
+    return {
+      ...data,
+      articleCount: 0,
+      editCount: 0,
+      pendingEditCount: 0
+    };
+  },
+  createArticle: async (payload) => {
+    const { data } = await api.post('/user/articles', payload);
+    return data;
+  },
+  updateArticle: async (id, payload) => {
+    const { data } = await api.put(`/user/articles/${id}`, payload);
+    return data;
+  },
+  createEdit: async (payload) => {
+    const { data } = await api.post('/user/edits', payload);
+    return data;
+  },
+  voteArticle: async (id) => {
+    const { data } = await api.post(`/user/articles/${id}/like`);
+    return data;
+  },
+};
+
+export const USER_ROLE_OPTIONS = ["ADMIN", "USER"];
