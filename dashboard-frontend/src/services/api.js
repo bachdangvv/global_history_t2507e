@@ -246,9 +246,8 @@ export const adminApi = {
     await api.delete(`/admin/events/${id}`);
   },
   linkArticleToEvent: async (eventId, articleId) => {
-    // Placeholder — no backend endpoint for linking yet
-    console.warn('linkArticleToEvent: backend endpoint not yet implemented');
-    return {};
+    const { data } = await api.post(`/admin/events/${eventId}/articles`, { articleId });
+    return data;
   },
 
   // ── Users ──────────────────────────────────────────────

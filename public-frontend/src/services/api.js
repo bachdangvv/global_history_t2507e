@@ -28,6 +28,11 @@ export async function fetchEvents() {
   return data;
 }
 
+export async function fetchEventDetail(id) {
+  const { data } = await api.get(`/historical-events/${id}`);
+  return data;
+}
+
 export async function fetchBooks() {
   try {
     const { data } = await api.get('/books');

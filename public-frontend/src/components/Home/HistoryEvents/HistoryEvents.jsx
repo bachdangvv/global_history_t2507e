@@ -45,7 +45,7 @@ const HistoryEvents = ({ data }) => {
             key={`${event.id}-${index}`} 
             className="history-item" 
             style={{ cursor: 'pointer' }}
-            onClick={() => navigate(`/search?query=${encodeURIComponent(event.title)}`)}
+            onClick={() => navigate(`/event/${event.id}`)}
           >
             <div className="history-year">{event.event_year}</div>
             <div className="history-content">

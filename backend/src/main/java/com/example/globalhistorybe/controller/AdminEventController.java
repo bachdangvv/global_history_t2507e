@@ -1,6 +1,7 @@
 package com.example.globalhistorybe.controller;
 
 import com.example.globalhistorybe.dto.req.EventRequest;
+import com.example.globalhistorybe.dto.req.LinkArticleRequest;
 import com.example.globalhistorybe.dto.res.EventResponse;
 import com.example.globalhistorybe.entity.User;
 import com.example.globalhistorybe.repository.UserRepository;
@@ -42,6 +43,18 @@ public class AdminEventController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         eventService.deleteEvent(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/articles")
+    public ResponseEntity<Void> linkArticle(@PathVariable Long id, @RequestBody LinkArticleRequest request) {
+        eventService.linkArticle(id, request.getArticleId());
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}/articles/{articleId}")
+    public ResponseEntity<Void> unlinkArticle(@PathVariable Long id, @PathVariable Long articleId) {
+        eventService.unlinkArticle(id, articleId);
         return ResponseEntity.noContent().build();
     }
 

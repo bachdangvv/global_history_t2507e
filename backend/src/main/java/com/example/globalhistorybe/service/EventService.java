@@ -13,6 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import com.example.globalhistorybe.dto.res.EventDetailResponse;
+import com.example.globalhistorybe.dto.res.ArticleResponse;
+import com.example.globalhistorybe.entity.EventArticle;
+import com.example.globalhistorybe.repository.EventArticleRepository;
+import com.example.globalhistorybe.repository.ArticleRepository;
+import com.example.globalhistorybe.service.ArticleService;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +26,9 @@ public class EventService {
 
     private final HistoricalEventRepository eventRepository;
     private final UserRepository userRepository;
+    private final EventArticleRepository eventArticleRepository;
+    private final ArticleRepository articleRepository;
+    private final ArticleService articleService;
 
     public List<EventResponse> getAllEvents() {
         return eventRepository.findAllByOrderByEventYearAsc()
@@ -30,6 +39,52 @@ public class EventService {
         HistoricalEvent event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Historical Event", id));
         return toResponse(event);
+    }
+
+    @Transactional
+    public EventDetailResponse getEventDetailById(Long id) {
+        HistoricalEvent event = eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Historical Event", id));
+        eventRepository.incrementViewCount(id);
+        
+        List<EventArticle> eventArticles = eventArticleRepository.findByEventId(id);
+        List<Long> articleIds = eventArticles.stream().map(EventArticle::getArticleId).collect(Collectors.toList());
+        
+        List<ArticleResponse> articles = articleRepository.findAllById(articleIds).stream()
+                .map(articleService::toResponse)
+                .collect(Collectors.toList());
+        
+        EventResponse baseResponse = toResponse(event);
+        return EventDetailResponse.builder()
+                .id(baseResponse.getId())
+                .creatorId(baseResponse.getCreatorId())
+                .creatorName(baseResponse.getCreatorName())
+                .title(baseResponse.getTitle())
+                .slug(baseResponse.getSlug())
+                .summary(baseResponse.getSummary())
+                .eventYear(baseResponse.getEventYear())
+                .eventDate(baseResponse.getEventDate())
+                .imageUrl(baseResponse.getImageUrl())
+                .viewCount(baseResponse.getViewCount() + 1)
+                .createdAt(baseResponse.getCreatedAt())
+                .articles(articles)
+                .build();
+    }
+
+    @Transactional
+    public void linkArticle(Long eventId, Long articleId) {
+        if (!eventRepository.existsById(eventId)) throw new ResourceNotFoundException("Historical Event", eventId);
+        if (!articleRepository.existsById(articleId)) throw new ResourceNotFoundException("Article", articleId);
+        
+        if (!eventArticleRepository.existsByEventIdAndArticleId(eventId, articleId)) {
+            EventArticle ea = EventArticle.builder().eventId(eventId).articleId(articleId).build();
+            eventArticleRepository.save(ea);
+        }
+    }
+
+    @Transactional
+    public void unlinkArticle(Long eventId, Long articleId) {
+        eventArticleRepository.deleteByEventIdAndArticleId(eventId, articleId);
     }
 
     @Transactional

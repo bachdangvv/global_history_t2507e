@@ -1,5 +1,6 @@
 package com.example.globalhistorybe.controller;
 
+import com.example.globalhistorybe.dto.res.EventDetailResponse;
 import com.example.globalhistorybe.dto.res.EventResponse;
 import com.example.globalhistorybe.service.EventService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class PublicEventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(eventService.getEventById(id));
+    public ResponseEntity<EventDetailResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.getEventDetailById(id));
     }
 }
