@@ -36,6 +36,11 @@ public class EditService {
                 .stream().map(this::toResponse).collect(Collectors.toList());
     }
 
+    public List<EditResponse> getEditsForArticle(Long articleId) {
+        return editRepository.findByEditableIdAndEditableTypeOrderByCreatedAtDesc(articleId, "article")
+                .stream().map(this::toResponse).collect(Collectors.toList());
+    }
+
     @Transactional
     public EditResponse submitEdit(EditRequest request, Long userId) {
         Edit edit = Edit.builder()

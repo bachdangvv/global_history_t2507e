@@ -56,6 +56,12 @@ public class ArticleService {
         return toResponse(article);
     }
 
+    public ArticleResponse getArticleByIdForAdmin(Long id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Article", id));
+        return toResponse(article);
+    }
+
     public List<ArticleResponse> getArticlesByAuthor(Long authorId) {
         return articleRepository.findByAuthorIdOrderByCreatedAtDesc(authorId)
                 .stream().map(this::toResponse).collect(Collectors.toList());

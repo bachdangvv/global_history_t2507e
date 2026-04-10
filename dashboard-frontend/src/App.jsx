@@ -1,6 +1,7 @@
 import { Navigate, Outlet, Route, Routes, useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import AdminSidebar from "./components/admin/AdminSidebar";
+import AdminArticleDetailPage from "./pages/admin/ArticleDetail";
 import UserSidebar from "./components/user/UserSidebar";
 import ArticlesPage from "./pages/admin/Articles";
 import CategoriesPage from "./pages/admin/Categories";
@@ -17,6 +18,8 @@ import NotificationsPage from "./pages/user/Notifications";
 import ProfilePage from "./pages/user/Profile";
 import WriteArticlePage from "./pages/user/WriteArticle";
 import CreateArticlePage from "./pages/user/CreateArticle";
+import SavedPage from "./pages/user/Saved";
+import HistoryPage from "./pages/user/History";
 
 function AdminLayout() {
   return (
@@ -31,7 +34,7 @@ function AdminLayout() {
 
 function UserLayout() {
   return (
-    <div className="app-frame user-frame">
+    <div className="app-frame">
       <UserSidebar />
       <main className="admin-content">
         <Outlet />
@@ -60,6 +63,7 @@ export default function App() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<DashboardPage />} />
         <Route path="articles" element={<ArticlesPage />} />
+        <Route path="articles/:id" element={<AdminArticleDetailPage />} />
         <Route path="edits" element={<EditsPage />} />
         <Route path="topics" element={<TopicsPage />} />
         <Route path="categories" element={<CategoriesPage />} />
@@ -69,6 +73,8 @@ export default function App() {
       </Route>
       <Route path="/user" element={<UserLayout />}>
         <Route index element={<HomePage />} />
+        <Route path="saved" element={<SavedPage />} />
+        <Route path="history" element={<HistoryPage />} />
         <Route path="articles/:id" element={<ArticleDetailPage />} />
         <Route path="articles/:id/edit" element={<EditArticlePage />} />
         <Route path="create" element={<CreateArticlePage />} />

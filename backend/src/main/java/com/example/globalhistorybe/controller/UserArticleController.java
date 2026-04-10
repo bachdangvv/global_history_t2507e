@@ -3,18 +3,22 @@ package com.example.globalhistorybe.controller;
 import com.example.globalhistorybe.dto.req.ArticleRequest;
 import com.example.globalhistorybe.dto.res.ArticleResponse;
 import com.example.globalhistorybe.dto.req.CommentRequest;
+import com.example.globalhistorybe.dto.req.VoteRequest;
 import com.example.globalhistorybe.dto.res.CommentResponse;
 import com.example.globalhistorybe.entity.User;
 import com.example.globalhistorybe.repository.UserRepository;
+import com.example.globalhistorybe.service.ArticleImageStorageService;
 import com.example.globalhistorybe.service.ArticleService;
 import com.example.globalhistorybe.service.CommentService;
 import com.example.globalhistorybe.service.VoteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,7 @@ import java.util.Map;
 public class UserArticleController {
 
     private final ArticleService articleService;
+    private final ArticleImageStorageService articleImageStorageService;
     private final CommentService commentService;
     private final VoteService voteService;
     private final UserRepository userRepository;
@@ -50,6 +55,18 @@ public class UserArticleController {
     @PostMapping("/articles/{id}/like")
     public ResponseEntity<Map<String, Object>> likeArticle(@PathVariable Long id) {
         return ResponseEntity.ok(voteService.toggleArticleLike(id, getCurrentUserId()));
+    }
+
+    @PostMapping("/articles/{id}/vote")
+    public ResponseEntity<Map<String, Object>> voteArticle(@PathVariable Long id,
+                                                           @RequestBody VoteRequest request) {
+        return ResponseEntity.ok(voteService.toggleArticleVote(id, request.getVoteType(), getCurrentUserId()));
+    }
+
+    @PostMapping(value = "/articles/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, String>> uploadArticleImage(@RequestParam("file") MultipartFile file) {
+        String imageUrl = articleImageStorageService.storeImage(file);
+        return ResponseEntity.ok(Map.of("imageUrl", imageUrl));
     }
 
     @PostMapping("/articles/{id}/comments")

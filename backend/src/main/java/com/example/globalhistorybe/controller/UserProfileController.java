@@ -5,11 +5,15 @@ import com.example.globalhistorybe.dto.res.UserResponse;
 import com.example.globalhistorybe.entity.User;
 import com.example.globalhistorybe.exception.ResourceNotFoundException;
 import com.example.globalhistorybe.repository.UserRepository;
+import com.example.globalhistorybe.service.AvatarStorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/user/profile")
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserProfileController {
 
     private final UserRepository userRepository;
+    private final AvatarStorageService avatarStorageService;
 
     @GetMapping
     public ResponseEntity<UserResponse> getProfile() {
@@ -29,8 +34,25 @@ public class UserProfileController {
     public ResponseEntity<UserResponse> updateProfile(@RequestBody ProfileUpdateRequest request) {
         User user = getCurrentUser();
         if (request.getUsername() != null) user.setUsername(request.getUsername());
+        if (request.getEmail() != null) user.setEmail(request.getEmail());
         if (request.getBio() != null) user.setBio(request.getBio());
-        if (request.getAvatarUrl() != null) user.setAvatarUrl(request.getAvatarUrl());
+        if (request.getAvatarUrl() != null) {
+            if (StringUtils.hasText(request.getAvatarUrl())) {
+                user.setAvatarUrl(request.getAvatarUrl());
+            } else {
+                avatarStorageService.deleteManagedAvatar(user.getAvatarUrl());
+                user.setAvatarUrl(null);
+            }
+        }
+        user = userRepository.save(user);
+        return ResponseEntity.ok(toResponse(user));
+    }
+
+    @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserResponse> uploadAvatar(@RequestParam("file") MultipartFile file) {
+        User user = getCurrentUser();
+        String avatarUrl = avatarStorageService.storeAvatar(file, user.getAvatarUrl());
+        user.setAvatarUrl(avatarUrl);
         user = userRepository.save(user);
         return ResponseEntity.ok(toResponse(user));
     }

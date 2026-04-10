@@ -22,6 +22,11 @@ public class AdminArticleController {
         return ResponseEntity.ok(articleService.getAllArticles());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ArticleResponse> getArticle(@PathVariable Long id) {
+        return ResponseEntity.ok(articleService.getArticleByIdForAdmin(id));
+    }
+
     @PutMapping("/{id}/status")
     public ResponseEntity<ArticleResponse> updateStatus(@PathVariable Long id,
                                                         @RequestBody StatusUpdateRequest request) {
