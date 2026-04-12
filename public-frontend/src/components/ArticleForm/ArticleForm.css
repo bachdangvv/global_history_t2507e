@@ -46,7 +46,7 @@
 
 .form-input:focus,
 .form-textarea:focus {
-  border-color: var(--primary-accent);
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(44, 44, 44, 0.08);
 }
 
@@ -59,7 +59,7 @@
 /* --- Input with error state --- */
 .form-input.input-error,
 .form-textarea.input-error {
-  border-color: var(--success-red);
+  border-color: #e74c3c;
 }
 
 .form-input.input-error:focus,
@@ -70,7 +70,7 @@
 /* --- Error Message --- */
 .field-error {
   font-size: 0.8rem;
-  color: var(--success-red);
+  color: #e74c3c;
   margin-top: 2px;
   display: flex;
   align-items: center;
@@ -120,11 +120,11 @@
 }
 
 .quill-wrapper.quill-error .ql-toolbar {
-  border-color: var(--success-red);
+  border-color: #e74c3c;
 }
 
 .quill-wrapper.quill-error .ql-container {
-  border-color: var(--success-red);
+  border-color: #e74c3c;
 }
 
 /* --- Submit Button --- */
@@ -134,8 +134,8 @@
   font-family: var(--font-body);
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--bg-color);
-  background-color: var(--primary-accent);
+  color: var(--surface-color);
+  background-color: var(--primary-color);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -169,8 +169,8 @@
 .btn-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(247, 244, 234, 0.3);
-  border-top-color: var(--bg-color);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--surface-color);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }

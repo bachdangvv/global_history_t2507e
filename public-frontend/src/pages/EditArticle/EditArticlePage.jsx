@@ -1,7 +1,7 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import api, { fetchCategories, fetchArticleDetail, fetchBooks, fetchAuthors, fetchExhibitions } from '../../services/api';
+import api, { submitEdit, fetchCategories, fetchArticleDetail, fetchBooks, fetchAuthors, fetchExhibitions } from '../../services/api';
 import ArticleForm from '../../components/ArticleForm/ArticleForm';
 import Sidebar from '../../components/Home/Sidebar/Sidebar';
 import { useAuth } from '../../context/AuthContext';
@@ -35,9 +35,16 @@ const EditArticlePage = ({ sidebarOpen }) => {
   });
 
   const mutation = useMutation({
-    mutationFn: (formData) => api.put(`/user/articles/${id}`, formData),
+    mutationFn: (formData) => submitEdit({
+      editableId: Number(id),
+      editableType: 'article',
+      title: formData.title,
+      summary: formData.summary,
+      content: formData.content,
+      thumbnail: formData.imageUrl || null,
+    }),
     onSuccess: () => {
-      addNotification('Your revision were submitted for review!', 'success');
+      addNotification('Your edit proposal has been submitted for review!', 'success');
       navigate(`/article/${id}`);
     },
     onError: (error) => {

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchArticleDetail, toggleArticleLike, fetchComments, postComment, fetchRelatedBooks, fetchRelatedAuthors, fetchRelatedExhibitions } from '../../services/api';
+import { fetchArticleDetail, toggleArticleLike, fetchComments, postComment, fetchRelatedBooks, fetchRelatedAuthors, fetchRelatedExhibitions, fetchArticleEdits } from '../../services/api';
 import { useNotification } from '../../context/NotificationContext';
 import { useAuth } from '../../context/AuthContext';
+import DOMPurify from 'dompurify';
 import './ArticleDetail.css';
 
 const ArticleDetail = () => {
@@ -14,6 +15,9 @@ const ArticleDetail = () => {
   const [article, setArticle] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('overview');
+
+  // Edit History
+  const [editHistory, setEditHistory] = useState([]);
 
   // Like state
   const [liked, setLiked] = useState(false);
@@ -43,6 +47,7 @@ const ArticleDetail = () => {
     fetchRelatedBooks(id).then(setRelatedBooks);
     fetchRelatedAuthors(id).then(setRelatedAuthors);
     fetchRelatedExhibitions(id).then(setRelatedExhibitions);
+    fetchArticleEdits(id).then(setEditHistory);
   }, [id]);
 
   const handleLike = async () => {
@@ -151,6 +156,20 @@ const ArticleDetail = () => {
           <span className="ad-stat-label">Views</span>
           <span className="ad-stat-value">{(article.views || 0).toLocaleString()}</span>
         </div>
+        <button 
+          className="ad-stat-btn ad-edit-btn" 
+          onClick={() => {
+            if (!user) {
+              addNotification('Please login to edit this article.', 'error');
+              navigate('/login', { state: { from: `/articles/${id}/edit` } });
+              return;
+            }
+            navigate(`/articles/${id}/edit`);
+          }}
+        >
+          <span className="ad-stat-icon">✏️</span>
+          <span className="ad-stat-label">Edit</span>
+        </button>
       </div>
 
       {/* ── Content ──────────────────── */}
@@ -187,33 +206,88 @@ const ArticleDetail = () => {
           )}
 
           <div className="ad-body">
-            {article.content && article.content.split('\n').map((para, i) => {
-              if (para.startsWith('## ')) {
-                const text = para.replace('## ', '').trim();
-                const sId = text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-                return <h2 key={i} id={sId} className="ad-section-heading">{text}</h2>;
-              }
-              if (para.startsWith('### ')) {
-                const text = para.replace('### ', '').trim();
-                return <h3 key={i} className="ad-sub-heading">{text}</h3>;
-              }
-              if (para.startsWith('- ')) {
-                return (
-                  <ul key={i} className="ad-list">
-                    {para.split('\n').map((item, j) =>
-                      item.startsWith('- ') ? <li key={j}>{item.replace('- ', '').trim()}</li> : null
-                    )}
-                  </ul>
-                );
-              }
-              if (para.trim()) {
-                return <p key={i} className="ad-paragraph">{para.trim()}</p>;
-              }
-              return null;
-            })}
+            {article.content && (
+              // Detect HTML content from Quill vs legacy markdown
+              (article.content.includes('<p>') || article.content.includes('<h') || article.content.includes('<ul>') || article.content.includes('<li>')) 
+              ? (
+                <div 
+                  className="ad-html-content"
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content.replace(/&nbsp;/g, ' ')) }} 
+                />
+              ) : (
+                article.content.split('\n').map((para, i) => {
+                  if (para.startsWith('## ')) {
+                    const text = para.replace('## ', '').trim();
+                    const sId = text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                    return <h2 key={i} id={sId} className="ad-section-heading">{text}</h2>;
+                  }
+                  if (para.startsWith('### ')) {
+                    const text = para.replace('### ', '').trim();
+                    return <h3 key={i} className="ad-sub-heading">{text}</h3>;
+                  }
+                  if (para.startsWith('- ')) {
+                    return (
+                      <ul key={i} className="ad-list">
+                        {para.split('\n').map((item, j) =>
+                          item.startsWith('- ') ? <li key={j}>{item.replace('- ', '').trim()}</li> : null
+                        )}
+                      </ul>
+                    );
+                  }
+                  if (para.trim()) {
+                    return <p key={i} className="ad-paragraph">{para.trim()}</p>;
+                  }
+                  return null;
+                })
+              )
+            )}
           </div>
         </main>
       </div>
+
+      {/* ── Edit History Section ──────────── */}
+      {editHistory && editHistory.length > 0 && (
+        <div className="ad-edit-history-section">
+          <h2 className="ad-edit-history-title">📝 Edit History ({editHistory.length})</h2>
+          <div className="ad-edit-history-list">
+            {editHistory.map((edit) => (
+              <div key={edit.id} className="ad-edit-item">
+                <div className="ad-edit-item-header">
+                  <div className="ad-edit-item-left">
+                    <div className="ad-edit-item-avatar">
+                      {(edit.editorName || 'A').charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <span className="ad-edit-item-editor">{edit.editorName || 'Anonymous'}</span>
+                      <span className="ad-edit-item-date">
+                        {edit.createdAt ? new Date(edit.createdAt).toLocaleDateString('en-US', { 
+                          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                        }) : 'Unknown date'}
+                      </span>
+                    </div>
+                  </div>
+                  <span className={`ad-edit-status ad-edit-status--${edit.status}`}>
+                    {edit.status === 'approved' ? '✅ Approved' : 
+                     edit.status === 'rejected' ? '❌ Rejected' : '⏳ Pending'}
+                  </span>
+                </div>
+                <div className="ad-edit-item-body">
+                  <strong className="ad-edit-item-title">{edit.title}</strong>
+                  {edit.summary && <p className="ad-edit-item-summary">{edit.summary}</p>}
+                </div>
+                {edit.reviewerName && (
+                  <div className="ad-edit-item-footer">
+                    Reviewed by <strong>{edit.reviewerName}</strong>
+                    {edit.reviewedAt && (
+                      <span> on {new Date(edit.reviewedAt).toLocaleDateString()}</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ── Comment Section ──────────── */}
       <div className="ad-comments-section">

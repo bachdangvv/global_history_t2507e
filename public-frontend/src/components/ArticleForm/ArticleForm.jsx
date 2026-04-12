@@ -41,6 +41,51 @@ const quillFormats = [
   'link', 'image',
 ];
 
+const convertLegacyToHtml = (text) => {
+  if (!text) return '';
+  // If already HTML, return as is
+  if (text.includes('<p>') || text.includes('<h') || text.includes('<ul>') || text.includes('<li>')) {
+    return text;
+  }
+  
+  const lines = text.split('\n');
+  let inList = false;
+  let html = '';
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (line.startsWith('- ')) {
+      if (!inList) {
+        html += '<ul>';
+        inList = true;
+      }
+      html += `<li>${line.substring(2).trim()}</li>`;
+    } else {
+      if (inList) {
+        html += '</ul>';
+        inList = false;
+      }
+      
+      if (line.startsWith('## ')) {
+        html += `<h2>${line.substring(3).trim()}</h2>`;
+      } else if (line.startsWith('### ')) {
+        html += `<h3>${line.substring(4).trim()}</h3>`;
+      } else if (line.trim() !== '') {
+        html += `<p>${line.trim()}</p>`;
+      } else {
+        html += '<p><br></p>';
+      }
+    }
+  }
+
+  if (inList) {
+    html += '</ul>';
+  }
+
+  return html;
+};
+
 const ArticleForm = ({ initialData, onSubmit, isPending }) => {
   const {
     register,
@@ -53,7 +98,7 @@ const ArticleForm = ({ initialData, onSubmit, isPending }) => {
     defaultValues: {
       title: initialData?.title || '',
       summary: initialData?.summary || '',
-      content: initialData?.content || '',
+      content: convertLegacyToHtml(initialData?.content) || '',
     },
   });
 

@@ -143,4 +143,27 @@ export async function postComment(articleId, { content }) {
   return data;
 }
 
+// ── Edits ───────────────────────────────────────────
+
+export async function submitEdit({ editableId, editableType, title, summary, content, thumbnail }) {
+  const { data } = await api.post('/user/edits', {
+    editableId,
+    editableType: editableType || 'article',
+    title,
+    summary,
+    content,
+    thumbnail,
+  });
+  return data;
+}
+
+export async function fetchArticleEdits(articleId) {
+  try {
+    const { data } = await api.get(`/articles/${articleId}/edits`);
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
 export default api;

@@ -2,8 +2,10 @@ package com.example.globalhistorybe.controller;
 
 import com.example.globalhistorybe.dto.res.ArticleResponse;
 import com.example.globalhistorybe.dto.res.CommentResponse;
+import com.example.globalhistorybe.dto.res.EditResponse;
 import com.example.globalhistorybe.service.ArticleService;
 import com.example.globalhistorybe.service.CommentService;
+import com.example.globalhistorybe.service.EditService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ public class ArticleController {
 
     private final ArticleService articleService;
     private final CommentService commentService;
+    private final EditService editService;
 
     @GetMapping("/search")
     public ResponseEntity<List<ArticleResponse>> search(@RequestParam(defaultValue = "") String q) {
@@ -45,5 +48,10 @@ public class ArticleController {
     @GetMapping("/{id}/comments")
     public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long id) {
         return ResponseEntity.ok(commentService.getArticleComments(id));
+    }
+
+    @GetMapping("/{id}/edits")
+    public ResponseEntity<List<EditResponse>> getArticleEdits(@PathVariable Long id) {
+        return ResponseEntity.ok(editService.getEditsForArticle(id));
     }
 }

@@ -77,8 +77,9 @@ const EventDetail = () => {
         </div>
         <div className="ed-stat">
           <span className="ed-stat-icon">📄</span>
-          <span className="ed-stat-label">Connected Articles</span>
           <span className="ed-stat-value">{articles.length}</span>
+          <span className="ed-stat-label">Articles</span>
+          
         </div>
       </div>
 
@@ -97,7 +98,7 @@ const EventDetail = () => {
       {articles.length > 0 && (
         <div className="ed-related-section">
           <div className="ed-related-container">
-            <h2 className="ed-related-title">📄 Connected Articles</h2>
+            <h2 className="ed-related-title">Article List</h2>
             <div className="ed-related-grid">
               {articles.map((article) => (
                 <div 
