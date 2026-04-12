@@ -6,6 +6,7 @@ import com.example.globalhistorybe.dto.res.EditResponse;
 import com.example.globalhistorybe.service.ArticleService;
 import com.example.globalhistorybe.service.CommentService;
 import com.example.globalhistorybe.service.EditService;
+import com.example.globalhistorybe.dto.res.EditResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,10 +49,5 @@ public class ArticleController {
     @GetMapping("/{id}/comments")
     public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long id) {
         return ResponseEntity.ok(commentService.getArticleComments(id));
-    }
-
-    @GetMapping("/{id}/edits")
-    public ResponseEntity<List<EditResponse>> getArticleEdits(@PathVariable Long id) {
-        return ResponseEntity.ok(editService.getEditsForArticle(id));
     }
 }

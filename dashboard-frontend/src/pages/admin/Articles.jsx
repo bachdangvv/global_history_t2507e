@@ -1,5 +1,6 @@
-import { Eye, Search, Trash2 } from "lucide-react";
+import { CheckCircle, Eye, Search, Trash2, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminTable from "../../components/admin/AdminTable";
 import { adminApi } from "../../services/api";
 
@@ -25,10 +26,10 @@ function getStatusTone(status) {
 }
 
 export default function ArticlesPage() {
+  const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   const [topics, setTopics] = useState([]);
   const [events, setEvents] = useState([]);
-  const [selectedArticle, setSelectedArticle] = useState(null);
   const [filters, setFilters] = useState({
     query: "",
     topicId: "all",
@@ -46,9 +47,6 @@ export default function ArticlesPage() {
     setArticles(articleList);
     setTopics(topicList);
     setEvents(eventList);
-    setSelectedArticle((current) =>
-      articleList.find((article) => article.id === current?.id) || articleList[0] || null,
-    );
   }
 
   useEffect(() => {
@@ -57,6 +55,11 @@ export default function ArticlesPage() {
 
   async function handleDelete(articleId) {
     await adminApi.deleteArticle(articleId);
+    await loadPage();
+  }
+
+  async function handleStatusChange(articleId, newStatus) {
+    await adminApi.updateArticleStatus(articleId, newStatus);
     await loadPage();
   }
 
@@ -125,10 +128,32 @@ export default function ArticlesPage() {
       header: "Actions",
       render: (article) => (
         <div className="table-actions">
+          {article.status !== "published" && (
+            <button
+              type="button"
+              className="icon-button icon-button-success"
+              onClick={() => handleStatusChange(article.id, "published")}
+              aria-label={`Approve ${article.title}`}
+              title="Approve (Publish)"
+            >
+              <CheckCircle size={16} />
+            </button>
+          )}
+          {article.status !== "archived" && article.status !== "published" && (
+            <button
+              type="button"
+              className="icon-button icon-button-warning"
+              onClick={() => handleStatusChange(article.id, "archived")}
+              aria-label={`Reject ${article.title}`}
+              title="Reject (Archive)"
+            >
+              <XCircle size={16} />
+            </button>
+          )}
           <button
             type="button"
             className="icon-button"
-            onClick={() => setSelectedArticle(article)}
+            onClick={() => navigate(`/admin/articles/${article.id}`)}
             aria-label={`View ${article.title}`}
           >
             <Eye size={16} />
@@ -152,7 +177,7 @@ export default function ArticlesPage() {
         <div>
           <p className="section-kicker">Articles management</p>
           <h1>Articles</h1>
-          <p>Inspect article records together with linked topics, historical events, and current edit status.</p>
+          <p>Inspect article records together with linked topics, historical events, and open each one in a dedicated detail page.</p>
         </div>
       </section>
 
@@ -220,57 +245,6 @@ export default function ArticlesPage() {
           emptyTitle="No matching articles"
           emptyText="Try changing the search term or one of the current filters."
         />
-      </section>
-
-      <section className="panel-card">
-        <div className="panel-heading">
-          <div>
-            <p className="section-kicker">Article detail</p>
-            <h2>{selectedArticle ? selectedArticle.title : "Select an article"}</h2>
-            <p>
-              {selectedArticle
-                ? "A focused detail panel for the currently selected article."
-                : "Choose an article from the table to inspect the full record."}
-            </p>
-          </div>
-        </div>
-
-        {selectedArticle ? (
-          <div className="detail-grid">
-            <div className="detail-card">
-              <span className="detail-label">Summary</span>
-              <p>{selectedArticle.summary || "No summary"}</p>
-            </div>
-            <div className="detail-card">
-              <span className="detail-label">Author</span>
-              <p>{selectedArticle.authorName || "Unknown"}</p>
-            </div>
-            <div className="detail-card">
-              <span className="detail-label">Topics</span>
-              <p>{(selectedArticle.topicNames || []).join(", ") || "No topics assigned"}</p>
-            </div>
-            <div className="detail-card">
-              <span className="detail-label">Linked events</span>
-              <p>
-                {(selectedArticle.linkedEvents || []).length
-                  ? selectedArticle.linkedEvents.map((eventItem) => eventItem.title).join(", ")
-                  : "No linked events"}
-              </p>
-            </div>
-            <div className="detail-card">
-              <span className="detail-label">Current edit</span>
-              <p>{selectedArticle.currentEdit ? selectedArticle.currentEdit.summary : "No current edit record"}</p>
-            </div>
-            <div className="detail-card">
-              <span className="detail-label">Reactions</span>
-              <p>{(selectedArticle.like_count || 0) + (selectedArticle.dislike_count || 0)} total reactions</p>
-            </div>
-            <div className="detail-card detail-card-wide">
-              <span className="detail-label">Content preview</span>
-              <p>{selectedArticle.content || "No content"}</p>
-            </div>
-          </div>
-        ) : null}
       </section>
     </div>
   );

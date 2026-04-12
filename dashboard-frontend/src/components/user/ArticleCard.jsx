@@ -44,10 +44,10 @@ export default function ArticleCard({ article, showEdit = false }) {
         </div>
 
         <div className="article-card-actions">
-          <Link className="button button-secondary button-small" to={`/user/articles/${article.id}`}>
+          <a className="button button-secondary button-small" href={`http://localhost:5173/article/${article.id}`} target="_blank" rel="noopener noreferrer">
             Read detail
             <ArrowRight size={16} />
-          </Link>
+          </a>
           {showEdit ? (
             <Link className="button button-primary button-small" to={`/user/articles/${article.id}/edit`}>
               <FilePenLine size={16} />

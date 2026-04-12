@@ -28,6 +28,21 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
+  // ── Handle cross-origin logout from dashboard ──────────────
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('logout') === 'true') {
+      setToken(null);
+      setUser(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Clean the URL so refreshing doesn't re-trigger logout
+      params.delete('logout');
+      const cleanUrl = window.location.pathname + (params.toString() ? `?${params.toString()}` : '');
+      window.history.replaceState({}, '', cleanUrl);
+    }
+  }, []);
+
   useEffect(() => {
     if (token) {
       localStorage.setItem('token', token);

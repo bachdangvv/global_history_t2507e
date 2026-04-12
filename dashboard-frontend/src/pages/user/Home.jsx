@@ -1,10 +1,20 @@
-import { Bell, BookOpen, Clock3, FileEdit, Search, Sparkles } from "lucide-react";
+import { BookOpen, Bookmark, Clock, FolderOpen, Heart, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
-import ArticleCard from "../../components/user/ArticleCard";
-import { userApi } from "../../services/api";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { Link } from "react-router-dom";
+import { userApi, getRecentlyViewed } from "../../services/api";
 
 function formatDate(value) {
+  if (!value) return "—";
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return "—";
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(d);
+}
+
+function formatDateTime(value) {
   if (!value) return "Never";
   const d = new Date(value);
   if (isNaN(d.getTime())) return "Never";
@@ -21,11 +31,9 @@ export default function HomePage() {
   const [profile, setProfile] = useState(null);
   const [edits, setEdits] = useState([]);
   const [notifications, setNotifications] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [filters, setFilters] = useState({
-    keyword: "",
-    topic: "all",
-  });
+  const [comments, setComments] = useState([]);
+  const [savedArticles, setSavedArticles] = useState([]);
+  const [recentlyViewed] = useState(() => getRecentlyViewed());
 
   useEffect(() => {
     Promise.all([
@@ -33,254 +41,327 @@ export default function HomePage() {
       userApi.getProfile(),
       userApi.getMyEdits(),
       userApi.getNotifications(),
-      userApi.getHistoricalEvents(),
-      userApi.getMyArticles()
-    ]).then(([topicList, profileData, editList, notificationList, eventList, myArticleList]) => {
+      userApi.getArticles(),
+      userApi.getMyArticles(),
+      userApi.getMyComments().catch(() => []),
+      userApi.getReadingList().catch(() => []),
+    ]).then(([topicList, profileData, editList, notificationList, articleList, myArticleList, commentList, savedList]) => {
       setTopics(topicList);
       setProfile(profileData);
       setEdits(editList);
       setNotifications(notificationList);
-      setEvents(eventList);
+      setArticles(articleList);
       setMyArticles(myArticleList);
+      setComments(commentList);
+      setSavedArticles(savedList);
     });
   }, []);
 
-  useEffect(() => {
-    userApi.getArticles(filters).then(setArticles);
-  }, [filters]);
+  // Build recent activity
+  const recentActivity = [
+    ...notifications.slice(0, 5).map((n) => ({
+      type: n.related_type || "Notification",
+      name: n.title || "Untitled",
+      date: n.created_at,
+      icon: "viewed",
+    })),
+    ...edits.slice(0, 3).map((e) => ({
+      type: "Edited",
+      name: e.title || "Untitled",
+      date: e.created_at,
+      icon: "edited",
+    })),
+    ...comments.slice(0, 3).map((c) => ({
+      type: "Commented",
+      name: c.content?.substring(0, 40) || "Comment",
+      date: c.created_at,
+      icon: "commented",
+    })),
+  ]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 6);
 
-  const unreadNotifications = notifications.filter((notification) => !notification.is_read);
-  const homeMetrics = [
-    {
-      label: "Published articles",
-      value: articles.length,
-      note: "Visible in the current filtered feed",
-      icon: BookOpen,
-    },
-    {
-      label: "Your edits",
-      value: profile?.editCount ?? 0,
-      note: "Rows tied to your contributor account",
-      icon: FileEdit,
-    },
-    {
-      label: "Pending review",
-      value: profile?.pendingEditCount ?? 0,
-      note: "Edits waiting for moderation",
-      icon: Clock3,
-    },
-    {
-      label: "Unread notifications",
-      value: unreadNotifications.length,
-      note: "New votes, approvals, and alerts",
-      icon: Bell,
-    },
-  ];
+  // Collect unique topics
+  const popularTopics = [];
+  const seenTopics = new Set();
+  articles.forEach((article) => {
+    (article.topicNames || []).forEach((name) => {
+      if (!seenTopics.has(name)) {
+        seenTopics.add(name);
+        popularTopics.push(name);
+      }
+    });
+  });
+  topics.forEach((t) => {
+    if (!seenTopics.has(t.name)) {
+      seenTopics.add(t.name);
+      popularTopics.push(t.name);
+    }
+  });
 
-  const chartData = myArticles.slice(0, 10).map((article, index) => ({
-    name: `Art ${index + 1}`,
-    title: article.title,
-    Likes: article.likeCount || article.like_count || 0,
-    Comments: article.commentCount || article.comment_count || 0,
-    Views: article.viewCount || article.view_count || 0,
-  }));
+  // Reading progress
+  const totalArticles = articles.length;
+  const readCount = recentlyViewed.length;
+  const progressPercent = totalArticles > 0 ? Math.min(Math.round((readCount / totalArticles) * 100), 100) : 0;
+
+  const publicFrontendUrl = "http://localhost:5173";
 
   return (
     <div className="page-shell">
-      <section className="page-hero user-hero">
-        <div>
-          <p className="section-kicker">Home page</p>
-          <h1>Overview</h1>
-          <p>Browse the library, evaluate your content performance, and track your review pipeline.</p>
-        </div>
-        <div className="hero-inline-note">
-          <Sparkles size={16} />
-          <span>{unreadNotifications.length} unread alerts and {edits.length} total edits on your account.</span>
+      {/* ═══ 1. HEADER ═════════════════════════════════════ */}
+      <section className="home-welcome-card">
+        <div className="home-welcome-text">
+          <h1 className="home-welcome-title">
+            Welcome, {profile?.username || "User"} 👋
+          </h1>
+          <p className="home-welcome-sub">
+            Last login: {formatDateTime(profile?.lastLoginAt || new Date().toISOString())}
+          </p>
         </div>
       </section>
 
-      <section className="metric-grid metric-grid-user-home">
-        {homeMetrics.map((metric) => {
-          const Icon = metric.icon;
-          return (
-            <article key={metric.label} className="metric-card">
-              <span className="metric-icon">
-                <Icon size={18} />
-              </span>
-              <div>
-                <p>{metric.label}</p>
-                <h3>{metric.value}</h3>
-                <span>{metric.note}</span>
-              </div>
-            </article>
-          );
-        })}
+      {/* ═══ 2. QUICK STATISTICS ═══════════════════════════ */}
+      <section className="home-stats-row">
+        <div className="home-stat-card">
+          <span className="home-stat-icon home-stat-icon-articles">
+            <BookOpen size={20} />
+          </span>
+          <div>
+            <span className="home-stat-label">Total Articles</span>
+            <strong className="home-stat-value">{articles.length}</strong>
+          </div>
+        </div>
+        <div className="home-stat-card">
+          <span className="home-stat-icon home-stat-icon-saved">
+            <Heart size={20} />
+          </span>
+          <div>
+            <span className="home-stat-label">Saved Articles</span>
+            <strong className="home-stat-value">{savedArticles.length}</strong>
+          </div>
+        </div>
+        <div className="home-stat-card">
+          <span className="home-stat-icon home-stat-icon-topics">
+            <FolderOpen size={20} />
+          </span>
+          <div>
+            <span className="home-stat-label">Topics Read</span>
+            <strong className="home-stat-value">{seenTopics.size}</strong>
+          </div>
+        </div>
       </section>
 
-      <section className="panel-card panel-card-wide">
+      {/* ═══ 3. READING PROGRESS ═══════════════════════════ */}
+      <section className="panel-card">
         <div className="panel-heading panel-heading-compact">
           <div>
-            <p className="section-kicker">Analytics</p>
-            <h2>Your Engagement</h2>
-            <p>Likes, comments, and views across your top authored articles.</p>
+            <p className="section-kicker">Learning</p>
+            <h2>Reading Progress</h2>
           </div>
+          <span style={{ color: "var(--color-text-muted)", fontSize: "0.85rem" }}>
+            {readCount} of {totalArticles} articles explored
+          </span>
         </div>
-        {myArticles.length > 0 ? (
-          <div style={{ width: '100%', height: 300, marginTop: 16 }}>
-            <ResponsiveContainer>
-              <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                <XAxis dataKey="name" stroke="#888" fontSize={12} tickLine={false} />
-                <YAxis stroke="#888" fontSize={12} tickLine={false} axisLine={false} />
-                <Tooltip 
-                  cursor={{ fill: 'rgba(0,0,0,0.05)' }}
-                  contentStyle={{ backgroundColor: "#ffffff", borderColor: "#e2e8f0", borderRadius: "8px", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1)" }}
-                  labelFormatter={(label, payload) => payload?.[0]?.payload?.title || label}
-                />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: '13px', paddingTop: '10px' }} />
-                <Bar dataKey="Views" fill="#8b5cf6" radius={[4, 4, 0, 0]} maxBarSize={40} />
-                <Bar dataKey="Likes" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={40} />
-                <Bar dataKey="Comments" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={40} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="table-empty-state">
-            <h3>No analytics data</h3>
-            <p>Publish some articles to see your engagement graph here.</p>
-          </div>
-        )}
+        <div className="progress-bar-track">
+          <div
+            className="progress-bar-fill"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+        <div className="progress-bar-label">
+          <span>{progressPercent}% complete</span>
+          <span>{totalArticles - readCount} remaining</span>
+        </div>
       </section>
 
-      <section className="page-grid page-grid-two page-grid-home">
-        <section className="panel-card panel-card-wide">
-          <div className="toolbar">
-            <label className="search-input">
-              <Search size={16} />
-              <input
-                type="search"
-                placeholder="Search title"
-                value={filters.keyword}
-                onChange={(event) =>
-                  setFilters((current) => ({ ...current, keyword: event.target.value }))
-                }
-              />
-            </label>
-
-            <div className="toolbar-group">
-              <select
-                value={filters.topic}
-                onChange={(event) =>
-                  setFilters((current) => ({ ...current, topic: event.target.value }))
-                }
-              >
-                <option value="all">All topics</option>
-                {topics.map((topic) => (
-                  <option key={topic.id} value={topic.id}>
-                    {topic.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-
+      {/* ═══ 4. RECENTLY VIEWED + SAVED ════════════════════ */}
+      <section className="home-bottom-grid">
+        {/* Recently Viewed */}
+        <div className="panel-card">
           <div className="panel-heading panel-heading-compact">
             <div>
-              <p className="section-kicker">Article feed</p>
-              <h2>Published collection</h2>
-              <p>Searchable article cards enriched with topics and linked events from the new schema.</p>
+              <p className="section-kicker">⏱️ Continue reading</p>
+              <h2>Recently Viewed</h2>
+            </div>
+            <Link to="/user/history" className="button button-secondary button-small">
+              View all
+            </Link>
+          </div>
+          {recentlyViewed.length ? (
+            <div className="home-activity-list">
+              {recentlyViewed.slice(0, 5).map((item) => (
+                <a
+                  key={item.id}
+                  href={`${publicFrontendUrl}/article/${item.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="home-activity-item"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <span className="home-activity-dot home-activity-dot-viewed" />
+                  <div className="home-activity-copy">
+                    <span className="home-activity-type">Viewed:</span>
+                    <span className="home-activity-name">{item.title}</span>
+                  </div>
+                  <small className="home-activity-date">{formatDate(item.viewedAt)}</small>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: "var(--color-text-muted)", margin: 0, fontSize: "0.85rem" }}>
+              No articles viewed yet. Start reading to build your history.
+            </p>
+          )}
+        </div>
+
+        {/* Saved Articles */}
+        <div className="panel-card">
+          <div className="panel-heading panel-heading-compact">
+            <div>
+              <p className="section-kicker">❤️ Bookmarks</p>
+              <h2>Saved Articles</h2>
+            </div>
+            <Link to="/user/saved" className="button button-secondary button-small">
+              View all
+            </Link>
+          </div>
+          {savedArticles.length ? (
+            <div className="home-activity-list">
+              {savedArticles.slice(0, 5).map((article) => (
+                <a
+                  key={article.id}
+                  href={`${publicFrontendUrl}/article/${article.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="home-activity-item"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <span className="home-activity-dot home-activity-dot-saved" />
+                  <div className="home-activity-copy">
+                    <span className="home-activity-type">Saved:</span>
+                    <span className="home-activity-name">{article.title}</span>
+                  </div>
+                  <small className="home-activity-date">
+                    {article.like_count ?? 0} ❤️
+                  </small>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: "var(--color-text-muted)", margin: 0, fontSize: "0.85rem" }}>
+              No saved articles yet. Bookmark articles to find them here.
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* ═══ 5. RECENT ARTICLES (table) ════════════════════ */}
+      <section className="panel-card">
+        <div className="panel-heading panel-heading-compact">
+          <div>
+            <p className="section-kicker">Browse</p>
+            <h2>Recent Articles</h2>
+          </div>
+        </div>
+
+        <div className="table-shell">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Author</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {articles.length ? (
+                articles.slice(0, 8).map((article) => (
+                  <tr key={article.id}>
+                    <td>
+                      <strong style={{ fontWeight: 600 }}>{article.title}</strong>
+                    </td>
+                    <td>
+                      <span className="status-badge status-badge-accent">
+                        {article.categoryName || article.topicNames?.[0] || "—"}
+                      </span>
+                    </td>
+                    <td style={{ color: "var(--color-text-muted)", fontSize: "0.85rem" }}>
+                      {article.authorName || "Unknown"}
+                    </td>
+                    <td style={{ color: "var(--color-text-muted)", fontSize: "0.85rem" }}>
+                      {formatDate(article.createdAt || article.created_at || article.updatedAt)}
+                    </td>
+                    <td>
+                      <a
+                        href={`${publicFrontendUrl}/article/${article.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="button button-secondary button-small"
+                      >
+                        Read
+                      </a>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} style={{ textAlign: "center", padding: "28px 0", color: "var(--color-text-muted)" }}>
+                    No articles found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* ═══ 6. POPULAR TOPICS + RECENT ACTIVITY ═══════════ */}
+      <section className="home-bottom-grid">
+        {/* Popular Topics */}
+        <div className="panel-card">
+          <div className="panel-heading panel-heading-compact">
+            <div>
+              <p className="section-kicker">Explore</p>
+              <h2>Popular Topics</h2>
             </div>
           </div>
-
-          <div className="article-grid">
-            {articles.length ? (
-              articles.map((article) => <ArticleCard key={article.id} article={article} />)
+          <div className="home-topics-grid">
+            {popularTopics.length ? (
+              popularTopics.slice(0, 12).map((name) => (
+                <span key={name} className="home-topic-chip">{name}</span>
+              ))
             ) : (
-              <div className="table-empty-state">
-                <h3>No articles found</h3>
-                <p>Try another keyword or adjust the selected filters.</p>
-              </div>
+              <p style={{ color: "var(--color-text-muted)", margin: 0 }}>No topics available.</p>
             )}
           </div>
-        </section>
+        </div>
 
-        <div className="page-shell home-side-stack">
-          <section className="panel-card">
-            <div className="panel-heading panel-heading-compact">
-              <div>
-                <p className="section-kicker">Recent edit activity</p>
-                <h2>Your latest edits</h2>
-                <p>Fast access to the current review pipeline.</p>
-              </div>
+        {/* Recent Activity */}
+        <div className="panel-card">
+          <div className="panel-heading panel-heading-compact">
+            <div>
+              <p className="section-kicker">Activity</p>
+              <h2>Recent Activity</h2>
             </div>
-            <div className="stack-list">
-              {edits.slice(0, 3).map((edit) => (
-                <article key={edit.id} className="stack-row">
-                  <div>
-                    <h3>{edit.title}</h3>
-                    <p>{edit.summary}</p>
+          </div>
+          <div className="home-activity-list">
+            {recentActivity.length ? (
+              recentActivity.map((item, idx) => (
+                <div key={idx} className="home-activity-item">
+                  <span className={`home-activity-dot home-activity-dot-${item.icon}`} />
+                  <div className="home-activity-copy">
+                    <span className="home-activity-type">{item.type}:</span>
+                    <span className="home-activity-name">{item.name}</span>
                   </div>
-                  <div className="stack-row-meta">
-                    <span className={`status-badge ${edit.status === "approved" ? "status-badge-success" : "status-badge-warning"}`}>
-                      {edit.status}
-                    </span>
-                    <small>{formatDate(edit.created_at)}</small>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section className="panel-card">
-            <div className="panel-heading panel-heading-compact">
-              <div>
-                <p className="section-kicker">Notification snapshot</p>
-                <h2>Unread first</h2>
-                <p>Latest moderation and community signals.</p>
-              </div>
-            </div>
-            <div className="stack-list">
-              {notifications.slice(0, 3).map((notification) => (
-                <article key={notification.id} className="stack-row">
-                  <div>
-                    <h3>{notification.title}</h3>
-                    <p>{notification.message}</p>
-                  </div>
-                  <div className="stack-row-meta">
-                    <span className={`status-badge ${notification.is_read ? "status-badge-neutral" : "status-badge-warning"}`}>
-                      {notification.related_type}
-                    </span>
-                    <small>{formatDate(notification.created_at)}</small>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section className="panel-card">
-            <div className="panel-heading panel-heading-compact">
-              <div>
-                <p className="section-kicker">Historical events</p>
-                <h2>Linked event records</h2>
-                <p>Reference events related to the article knowledge graph.</p>
-              </div>
-            </div>
-            <div className="stack-list">
-              {events.slice(0, 3).map((eventItem) => (
-                <article key={eventItem.id} className="stack-row">
-                  <div>
-                    <h3>{eventItem.title}</h3>
-                    <p>{eventItem.summary}</p>
-                  </div>
-                  <div className="stack-row-meta">
-                    <span className="status-badge status-badge-accent">{eventItem.event_year}</span>
-                    <small>{formatDate(eventItem.created_at)}</small>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
+                  <small className="home-activity-date">{formatDate(item.date)}</small>
+                </div>
+              ))
+            ) : (
+              <p style={{ color: "var(--color-text-muted)", margin: 0 }}>No recent activity.</p>
+            )}
+          </div>
         </div>
       </section>
     </div>
