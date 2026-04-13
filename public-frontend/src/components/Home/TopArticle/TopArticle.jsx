@@ -112,7 +112,7 @@ const TopArticle = ({ topLikeData, topViewData, recentData, countries }) => {
                   
                   {activeSort === 'top_view' && article.view_count !== undefined && (
                     <div className="stats-indicator">
-                      <span className="view-count">👁️ {article.view_count.toLocaleString()} lượt xem</span>
+                      <span className="view-count">👁️ {article.view_count.toLocaleString()} views</span>
                     </div>
                   )}
                   

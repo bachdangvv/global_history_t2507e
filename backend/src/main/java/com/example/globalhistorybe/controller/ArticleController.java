@@ -50,4 +50,9 @@ public class ArticleController {
     public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long id) {
         return ResponseEntity.ok(commentService.getArticleComments(id));
     }
+
+    @GetMapping("/{id}/edits")
+    public ResponseEntity<List<EditResponse>> getArticleEdits(@PathVariable Long id) {
+        return ResponseEntity.ok(editService.getEditsForArticle(id));
+    }
 }

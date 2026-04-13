@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
+                        // Public endpoints (no auth required)
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/articles/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/historical-events/**").permitAll()
@@ -50,10 +50,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/topics/**").permitAll()
-                        // Admin endpoints
-                        .requestMatchers("/api/admin/**").permitAll()
-                        // Authenticated endpoints
-                        .anyRequest().permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/tags/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/edits/**").permitAll()
+                        // Admin endpoints — ADMIN role only
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // Authenticated user endpoints
+                        .requestMatchers("/api/user/**").authenticated()
+                        // Everything else requires authentication
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

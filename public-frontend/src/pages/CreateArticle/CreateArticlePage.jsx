@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import api, { fetchCategories, fetchBooks, fetchAuthors, fetchExhibitions } from '../../services/api';
+import api, { fetchCategories, fetchBooks, fetchAuthors, fetchExhibitions, fetchTags, fetchTopics } from '../../services/api';
 import ArticleForm from '../../components/ArticleForm/ArticleForm';
 import Sidebar from '../../components/Home/Sidebar/Sidebar';
 import { useAuth } from '../../context/AuthContext';
@@ -19,6 +19,8 @@ const CreateArticlePage = ({ sidebarOpen }) => {
   const { data: books = [] } = useQuery({ queryKey: ['books'], queryFn: fetchBooks });
   const { data: authors = [] } = useQuery({ queryKey: ['authors'], queryFn: fetchAuthors });
   const { data: exhibitions = [] } = useQuery({ queryKey: ['exhibitions'], queryFn: fetchExhibitions });
+  const { data: tags = [] } = useQuery({ queryKey: ['tags'], queryFn: fetchTags });
+  const { data: topics = [] } = useQuery({ queryKey: ['topics'], queryFn: fetchTopics });
 
   useEffect(() => {
     if (!loading && !user) {
@@ -77,6 +79,10 @@ const CreateArticlePage = ({ sidebarOpen }) => {
         <ArticleForm
           onSubmit={(formData) => mutation.mutate(formData)}
           isPending={mutation.isPending}
+          categories={categories}
+          tags={tags}
+          topics={topics}
+          isEditMode={false}
         />
       </div>
     </div>

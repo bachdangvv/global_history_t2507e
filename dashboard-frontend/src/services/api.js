@@ -14,6 +14,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Handle 403 Forbidden — user is not an admin
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 403) {
+      console.warn("Access denied: admin role required.");
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const adminApi = {
   getDashboardOverview: async () => {
     const [stats, articles, categories, topics, tags, events, users, pendingEdits] = await Promise.all([
@@ -654,6 +665,17 @@ export const userApi = {
 
   removeFromReadingList: async (articleId) => {
     await api.delete(`/user/my/reading-list/${articleId}`);
+  },
+
+  createTag: async (name) => {
+    const { data } = await api.post("/user/tags", { name });
+    return data;
+  },
+
+  createTopic: async (payload) => {
+    const slug = (payload.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+    const { data } = await api.post("/user/topics", { ...payload, slug });
+    return data;
   },
 };
 

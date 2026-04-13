@@ -63,6 +63,12 @@ public class UserArticleController {
         return ResponseEntity.ok(voteService.toggleArticleVote(id, request.getVoteType(), getCurrentUserId()));
     }
 
+    @GetMapping("/articles/{id}/vote")
+    public ResponseEntity<Map<String, String>> getUserVote(@PathVariable Long id) {
+        String voteType = voteService.getUserVoteType(id, "article", getCurrentUserId());
+        return ResponseEntity.ok(Map.of("voteType", voteType == null ? "" : voteType));
+    }
+
     @PostMapping(value = "/articles/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> uploadArticleImage(@RequestParam("file") MultipartFile file) {
         String imageUrl = articleImageStorageService.storeImage(file);

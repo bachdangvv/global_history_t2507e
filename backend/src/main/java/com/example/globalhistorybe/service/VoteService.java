@@ -130,4 +130,10 @@ public class VoteService {
 
         editRepository.save(edit);
     }
+
+    public String getUserVoteType(Long votableId, String votableType, Long userId) {
+        return voteRepository.findByUserIdAndVotableIdAndVotableType(userId, votableId, votableType)
+                .map(Vote::getVoteType)
+                .orElse(null);
+    }
 }

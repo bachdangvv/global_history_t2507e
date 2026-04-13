@@ -1,5 +1,5 @@
 import { Navigate, Outlet, Route, Routes, useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import AdminSidebar from "./components/admin/AdminSidebar";
 import AdminArticleDetailPage from "./pages/admin/ArticleDetail";
 import UserSidebar from "./components/user/UserSidebar";
@@ -21,6 +21,18 @@ import CreateArticlePage from "./pages/user/CreateArticle";
 import SavedPage from "./pages/user/Saved";
 import HistoryPage from "./pages/user/History";
 
+/** Decode the role from the JWT stored in localStorage */
+function getUserRole() {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.role || null;
+  } catch {
+    return null;
+  }
+}
+
 function AdminLayout() {
   return (
     <div className="app-frame">
@@ -30,6 +42,15 @@ function AdminLayout() {
       </main>
     </div>
   );
+}
+
+/** Guard: only render AdminLayout if user has ADMIN role */
+function AdminGuard() {
+  const role = useMemo(() => getUserRole(), []);
+  if (role !== "ADMIN") {
+    return <Navigate to="/user" replace />;
+  }
+  return <AdminLayout />;
 }
 
 function UserLayout() {
@@ -60,7 +81,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/admin" replace />} />
-      <Route path="/admin" element={<AdminLayout />}>
+      <Route path="/admin" element={<AdminGuard />}>
         <Route index element={<DashboardPage />} />
         <Route path="articles" element={<ArticlesPage />} />
         <Route path="articles/:id" element={<AdminArticleDetailPage />} />

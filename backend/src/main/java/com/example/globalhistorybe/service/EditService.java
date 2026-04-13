@@ -41,6 +41,17 @@ public class EditService {
                 .stream().map(this::toResponse).collect(Collectors.toList());
     }
 
+    public List<EditResponse> getRecentEdits() {
+        return editRepository.findAllByOrderByCreatedAtDesc()
+                .stream().map(this::toResponse).collect(Collectors.toList());
+    }
+
+    public EditResponse getEditById(Long id) {
+        Edit edit = editRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Edit", id));
+        return toResponse(edit);
+    }
+
     @Transactional
     public EditResponse submitEdit(EditRequest request, Long userId) {
         Edit edit = Edit.builder()

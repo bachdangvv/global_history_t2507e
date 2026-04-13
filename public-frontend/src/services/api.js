@@ -87,6 +87,46 @@ export async function fetchRelatedExhibitions(articleId) {
   }
 }
 
+export async function fetchTags() {
+  try {
+    const { data } = await api.get('/tags');
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchTopics() {
+  try {
+    const { data } = await api.get('/topics');
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function createTag(name) {
+  const { data } = await api.post('/user/tags', { name });
+  return data;
+}
+
+export async function createTopic(name, description = '') {
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+  const { data } = await api.post('/user/topics', { name, slug, description });
+  return data;
+}
+
+export async function uploadArticleImage(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const { data } = await api.post('/user/articles/image', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+
+  return data?.imageUrl || '';
+}
+
 // ── Articles ────────────────────────────────────────
 
 // ── Helper to map ArticleResponse to classic mock shape ────────
@@ -97,6 +137,7 @@ const mapArticle = (a) => {
     image: a.imageUrl || 'https://via.placeholder.com/800x400?text=No+Image',
     views: a.viewCount || 0,
     likes: a.likeCount || 0,
+    dislikes: a.dislikeCount || 0,
     category: a.categoryName || 'Uncategorized',
     author: a.authorName || 'Anonymous',
     description: a.summary || ''
@@ -123,11 +164,18 @@ export async function fetchArticleDetail(id) {
   return mapArticle(data);
 }
 
-// ── Likes ───────────────────────────────────────────
+export async function fetchUserArticleVote(id) {
+  try {
+    const { data } = await api.get(`/user/articles/${id}/vote`);
+    return data?.voteType || null; // 'like', 'dislike', or null
+  } catch {
+    return null;
+  }
+}
 
-export async function toggleArticleLike(id) {
-  const { data } = await api.post(`/user/articles/${id}/like`);
-  return data; // { liked: bool, likeCount: number }
+export async function toggleArticleVote(id, voteType = 'like') {
+  const { data } = await api.post(`/user/articles/${id}/vote`, { voteType });
+  return data; // { action: string, voteType: string }
 }
 
 // ── Comments ────────────────────────────────────────
@@ -164,6 +212,34 @@ export async function fetchArticleEdits(articleId) {
   } catch {
     return [];
   }
+}
+
+export async function fetchRecentEdits() {
+  try {
+    const { data } = await api.get('/edits/recent');
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchEditDetail(id) {
+  const { data } = await api.get(`/edits/${id}`);
+  return data;
+}
+
+export async function fetchUserEditVote(id) {
+  try {
+    const { data } = await api.get(`/user/edits/${id}/vote`);
+    return data?.voteType || null; // 'upvote', 'downvote', or null
+  } catch {
+    return null;
+  }
+}
+
+export async function toggleEditVote(id, voteType) {
+  const { data } = await api.post(`/user/edits/${id}/vote`, { voteType });
+  return data; // { action: string, voteType: string }
 }
 
 export default api;

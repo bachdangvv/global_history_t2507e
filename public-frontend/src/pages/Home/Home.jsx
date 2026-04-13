@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchCategories, fetchEvents, fetchTopArticles, fetchRecommendedArticles, fetchSearchResults, fetchBooks, fetchAuthors, fetchExhibitions } from '../../services/api';
+import { fetchCategories, fetchEvents, fetchTopArticles, fetchRecommendedArticles, fetchSearchResults, fetchBooks, fetchAuthors, fetchExhibitions, fetchRecentEdits } from '../../services/api';
 import './Home.css';
 
 import TopRevisions from '../../components/Home/TopRevisions/TopRevisions';
@@ -17,6 +17,7 @@ const Home = ({ sidebarOpen }) => {
   const { data: books = [] } = useQuery({ queryKey: ['books'], queryFn: fetchBooks });
   const { data: authors = [] } = useQuery({ queryKey: ['authors'], queryFn: fetchAuthors });
   const { data: exhibitions = [] } = useQuery({ queryKey: ['exhibitions'], queryFn: fetchExhibitions });
+  const { data: recentEdits = [] } = useQuery({ queryKey: ['recentEdits'], queryFn: fetchRecentEdits });
 
   // Dynamic compute
   const mappedCategories = categories.map(c => ({ ...c, icon: c.icon || '📌' }));
@@ -55,16 +56,16 @@ const Home = ({ sidebarOpen }) => {
         {/* Topbar */}
         <div className="home-area-topbar">
           <TopRevisions 
-            recentArticles={recentArticles || topArticles}
+            recentEdits={recentEdits}
           />
         </div>
         
         {/* Articles (Left Main) */}
         <div className="home-area-articles">
           <TopArticle 
-            topLikeData={topArticles.map(a => ({...a, like_count: a.likes || 0, view_count: a.views || 0}))} 
-            topViewData={searchArticles.map(a => ({...a, view_count: a.views || 0, like_count: a.likes || 0}))}
-            recentData={recentArticles.map(a => ({...a, view_count: a.views || 0, like_count: a.likes || 0}))}
+            topLikeData={topArticles.map(a => ({...a, like_count: a.likes || 0, dislike_count: a.dislikes || 0, view_count: a.views || 0}))} 
+            topViewData={searchArticles.map(a => ({...a, view_count: a.views || 0, like_count: a.likes || 0, dislike_count: a.dislikes || 0}))}
+            recentData={recentArticles.map(a => ({...a, view_count: a.views || 0, like_count: a.likes || 0, dislike_count: a.dislikes || 0}))}
             countries={dynamicCountries}
           />
         </div>

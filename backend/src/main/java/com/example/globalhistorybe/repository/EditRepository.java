@@ -9,5 +9,6 @@ public interface EditRepository extends JpaRepository<Edit, Long> {
     List<Edit> findByStatusOrderByCreatedAtDesc(String status);
     List<Edit> findByEditorIdOrderByCreatedAtDesc(Long editorId);
     List<Edit> findByEditableIdAndEditableTypeOrderByCreatedAtDesc(Long editableId, String editableType);
+    List<Edit> findAllByOrderByCreatedAtDesc();
     long countByStatus(String status);
 }

@@ -3,7 +3,6 @@ export default function ArticleForm({
   description,
   values,
   categories,
-  countries,
   onChange,
   onSubmit,
   submitLabel,
@@ -29,11 +28,31 @@ export default function ArticleForm({
           />
         </label>
 
+        <label className="admin-field">
+          <span>Summary</span>
+          <textarea
+            rows={3}
+            value={values.summary}
+            onChange={(event) => onChange("summary", event.target.value)}
+            placeholder="Write a brief summary of the article..."
+          />
+        </label>
+
+        <label className="admin-field">
+          <span>Image URL</span>
+          <input
+            type="url"
+            value={values.imageUrl}
+            onChange={(event) => onChange("imageUrl", event.target.value)}
+            placeholder="https://example.com/image.jpg"
+          />
+        </label>
+
         <div className="user-form-grid">
           <label className="admin-field">
             <span>Category</span>
             <select
-              value={values.categoryId}
+              value={values.categoryId || ''}
               onChange={(event) => onChange("categoryId", event.target.value)}
             >
               <option value="">Select category</option>
@@ -47,14 +66,12 @@ export default function ArticleForm({
 
           <label className="admin-field">
             <span>Country</span>
-            <select value={values.country} onChange={(event) => onChange("country", event.target.value)}>
-              <option value="">Select country</option>
-              {countries.map((country) => (
-                <option key={country.id} value={country.name}>
-                  {country.name}
-                </option>
-              ))}
-            </select>
+            <input
+              type="text"
+              value={values.country || ''}
+              onChange={(event) => onChange("country", event.target.value)}
+              placeholder="e.g. Vietnam, Global"
+            />
           </label>
         </div>
 

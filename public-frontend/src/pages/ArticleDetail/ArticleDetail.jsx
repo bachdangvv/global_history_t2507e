@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { fetchArticleDetail, toggleArticleLike, fetchComments, postComment, fetchRelatedBooks, fetchRelatedAuthors, fetchRelatedExhibitions, fetchArticleEdits } from '../../services/api';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { fetchArticleDetail, fetchUserArticleVote, toggleArticleVote, fetchComments, postComment, fetchRelatedBooks, fetchRelatedAuthors, fetchRelatedExhibitions, fetchArticleEdits } from '../../services/api';
 import { useNotification } from '../../context/NotificationContext';
 import { useAuth } from '../../context/AuthContext';
 import DOMPurify from 'dompurify';
@@ -18,10 +18,14 @@ const ArticleDetail = () => {
 
   // Edit History
   const [editHistory, setEditHistory] = useState([]);
+  const [showEditHistory, setShowEditHistory] = useState(false);
+  const [editHistoryPage, setEditHistoryPage] = useState(1);
+  const editsPerPage = 5;
 
-  // Like state
-  const [liked, setLiked] = useState(false);
+  // Vote state
+  const [userVoteType, setUserVoteType] = useState(null); // 'like', 'dislike', or null
   const [likeCount, setLikeCount] = useState(0);
+  const [dislikeCount, setDislikeCount] = useState(0);
 
   // Comments
   const [comments, setComments] = useState([]);
@@ -39,9 +43,16 @@ const ArticleDetail = () => {
       if (data) {
         setArticle(data);
         setLikeCount(data.likes || 0);
+        setDislikeCount(data.dislikes || 0);
       }
       setIsLoading(false);
     });
+
+    if (user) {
+      fetchUserArticleVote(id).then((type) => {
+        setUserVoteType(type);
+      });
+    }
 
     fetchComments(id).then(setComments);
     fetchRelatedBooks(id).then(setRelatedBooks);
@@ -50,25 +61,46 @@ const ArticleDetail = () => {
     fetchArticleEdits(id).then(setEditHistory);
   }, [id]);
 
-  const handleLike = async () => {
+  const handleVote = async (type) => {
     if (!user) {
-      addNotification('Please login to like this article', 'error');
-      navigate('/login', { state: { from: location }});
+      addNotification(`Please login to ${type} this article`, 'error');
+      navigate('/login', { state: { from: location } });
       return;
     }
 
-    const prev = liked;
-    setLiked(!prev);
-    setLikeCount((c) => (prev ? c - 1 : c + 1));
+    const previousVote = userVoteType;
+    const sameVote = previousVote === type;
+    const newVote = sameVote ? null : type;
+
+    // Optimistic UI updates
+    setUserVoteType(newVote);
+
+    if (type === 'like') {
+      setLikeCount((c) => (sameVote ? c - 1 : c + 1));
+      if (previousVote === 'dislike') setDislikeCount((c) => Math.max(0, c - 1));
+    } else {
+      setDislikeCount((c) => (sameVote ? c - 1 : c + 1));
+      if (previousVote === 'like') setLikeCount((c) => Math.max(0, c - 1));
+    }
 
     try {
-      const res = await toggleArticleLike(id);
-      if (res.likeCount !== null) setLikeCount(res.likeCount);
-      addNotification(prev ? 'Like removed' : 'You liked this article! ❤️', 'success');
+      const res = await toggleArticleVote(id, type);
+      if (res.action === 'voted') {
+        addNotification(`You ${type}d this article!`, 'success');
+      } else if (res.action === 'removed') {
+        addNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} removed`, 'info');
+      }
     } catch {
-      setLiked(prev);
-      setLikeCount((c) => (prev ? c + 1 : c - 1));
-      addNotification('Failed to update like', 'error');
+      // Revert on error
+      setUserVoteType(previousVote);
+      if (type === 'like') {
+        setLikeCount((c) => (sameVote ? c + 1 : Math.max(0, c - 1)));
+        if (previousVote === 'dislike') setDislikeCount((c) => c + 1);
+      } else {
+        setDislikeCount((c) => (sameVote ? c + 1 : Math.max(0, c - 1)));
+        if (previousVote === 'like') setLikeCount((c) => c + 1);
+      }
+      addNotification(`Failed to ${type} article`, 'error');
     }
   };
 
@@ -141,10 +173,15 @@ const ArticleDetail = () => {
 
       {/* ── Stats Bar ────────────────── */}
       <div className="ad-stats-bar">
-        <button className={`ad-stat-btn ${liked ? 'liked' : ''}`} onClick={handleLike}>
-          <span className="ad-stat-icon">{liked ? '❤️' : '🤍'}</span>
+        <button className={`ad-stat-btn ${userVoteType === 'like' ? 'liked' : ''}`} onClick={() => handleVote('like')}>
+          <span className="ad-stat-icon">{userVoteType === 'like' ? '👍' : '👍'}</span>
           <span className="ad-stat-label">Like</span>
           <span className="ad-stat-value">{likeCount.toLocaleString()}</span>
+        </button>
+        <button className={`ad-stat-btn ${userVoteType === 'dislike' ? 'disliked' : ''}`} onClick={() => handleVote('dislike')}>
+          <span className="ad-stat-icon">{userVoteType === 'dislike' ? '👎' : '👎'}</span>
+          <span className="ad-stat-label">Dislike</span>
+          <span className="ad-stat-value">{dislikeCount.toLocaleString()}</span>
         </button>
         <div className="ad-stat">
           <span className="ad-stat-icon">💬</span>
@@ -170,6 +207,57 @@ const ArticleDetail = () => {
           <span className="ad-stat-icon">✏️</span>
           <span className="ad-stat-label">Edit</span>
         </button>
+      </div>
+
+      {/* ── Edit History Section ──────────── */}
+      <div className="ad-edit-history-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px', marginBottom: '20px' }}>
+        <button 
+          className="ad-btn"
+          style={{ width: 'fit-content', minWidth: '200px', padding: '10px 20px', background: '#f5f3f1', border: '1px solid #d0ccc3', borderRadius: '20px', cursor: 'pointer', fontWeight: '600', color: '#5a4d41', transition: 'background 0.2s' }}
+          onClick={() => setShowEditHistory(!showEditHistory)}
+        >
+          {showEditHistory ? "Hide Edit History" : `View Edit History (${editHistory.length})`}
+        </button>
+
+        {showEditHistory && (
+          <div className="ad-edit-history-section" style={{ width: '100%', marginTop: '16px', background: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '20px' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem', color: 'var(--text-heading)' }}>Edit History</h3>
+            {editHistory.length === 0 ? (
+               <p style={{ color: '#888', fontStyle: 'italic', margin: 0 }}>No edits have been proposed yet.</p>
+            ) : (
+              <div className="ad-edit-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {editHistory.slice((editHistoryPage - 1) * editsPerPage, editHistoryPage * editsPerPage).map(edit => (
+                  <Link to={`/edits/${edit.id}`} key={edit.id} className="ad-edit-card" style={{ display: 'block', padding: '16px', border: '1px solid var(--border-color)', borderRadius: '8px', textDecoration: 'none', color: 'inherit', transition: 'border-color 0.2s', background: '#faf9f5' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-heading)' }}>{edit.title}</h4>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase', padding: '4px 8px', borderRadius: '4px', background: edit.status === 'approved' ? '#e6f4ea' : edit.status === 'rejected' ? '#fce8e6' : '#fff4e5', color: edit.status === 'approved' ? '#137333' : edit.status === 'rejected' ? '#c5221f' : '#b06000' }}>{edit.status}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '16px', fontSize: '0.85rem', color: '#666' }}>
+                      <span><strong>By</strong> {edit.editorName || 'Unknown'}</span>
+                      <span><strong>Submitted</strong> {new Date(edit.createdAt).toLocaleDateString()}</span>
+                      <span>👍 {edit.upvoteCount || 0} 👎 {edit.downvoteCount || 0}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+            {editHistory.length > editsPerPage && (
+              <div className="ad-pagination" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginTop: '20px' }}>
+                <button 
+                  disabled={editHistoryPage === 1} 
+                  onClick={() => setEditHistoryPage(p => p - 1)}
+                  style={{ padding: '8px 16px', background: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '4px', cursor: editHistoryPage === 1 ? 'not-allowed' : 'pointer', opacity: editHistoryPage === 1 ? 0.5 : 1 }}
+                >&laquo; Prev</button>
+                <span style={{ fontSize: '0.9rem', color: '#555' }}>Page {editHistoryPage} of {Math.ceil(editHistory.length / editsPerPage)}</span>
+                <button 
+                  disabled={editHistoryPage === Math.ceil(editHistory.length / editsPerPage)} 
+                  onClick={() => setEditHistoryPage(p => p + 1)}
+                  style={{ padding: '8px 16px', background: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '4px', cursor: editHistoryPage === Math.ceil(editHistory.length / editsPerPage) ? 'not-allowed' : 'pointer', opacity: editHistoryPage === Math.ceil(editHistory.length / editsPerPage) ? 0.5 : 1 }}
+                >Next &raquo;</button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ── Content ──────────────────── */}
@@ -245,49 +333,7 @@ const ArticleDetail = () => {
         </main>
       </div>
 
-      {/* ── Edit History Section ──────────── */}
-      {editHistory && editHistory.length > 0 && (
-        <div className="ad-edit-history-section">
-          <h2 className="ad-edit-history-title">📝 Edit History ({editHistory.length})</h2>
-          <div className="ad-edit-history-list">
-            {editHistory.map((edit) => (
-              <div key={edit.id} className="ad-edit-item">
-                <div className="ad-edit-item-header">
-                  <div className="ad-edit-item-left">
-                    <div className="ad-edit-item-avatar">
-                      {(edit.editorName || 'A').charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <span className="ad-edit-item-editor">{edit.editorName || 'Anonymous'}</span>
-                      <span className="ad-edit-item-date">
-                        {edit.createdAt ? new Date(edit.createdAt).toLocaleDateString('en-US', { 
-                          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                        }) : 'Unknown date'}
-                      </span>
-                    </div>
-                  </div>
-                  <span className={`ad-edit-status ad-edit-status--${edit.status}`}>
-                    {edit.status === 'approved' ? '✅ Approved' : 
-                     edit.status === 'rejected' ? '❌ Rejected' : '⏳ Pending'}
-                  </span>
-                </div>
-                <div className="ad-edit-item-body">
-                  <strong className="ad-edit-item-title">{edit.title}</strong>
-                  {edit.summary && <p className="ad-edit-item-summary">{edit.summary}</p>}
-                </div>
-                {edit.reviewerName && (
-                  <div className="ad-edit-item-footer">
-                    Reviewed by <strong>{edit.reviewerName}</strong>
-                    {edit.reviewedAt && (
-                      <span> on {new Date(edit.reviewedAt).toLocaleDateString()}</span>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+
 
       {/* ── Comment Section ──────────── */}
       <div className="ad-comments-section">

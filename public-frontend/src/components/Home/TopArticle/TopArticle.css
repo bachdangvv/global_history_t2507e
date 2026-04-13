@@ -59,7 +59,7 @@
 
 .vote-bar-container {
   height: 4px;
-  background-color: #f1f1f1; 
+  background-color: #A43931; /* Sophisticated Deep Red for Dislikes */
   border-radius: 2px;
   overflow: hidden;
   margin-bottom: 6px;
@@ -67,7 +67,7 @@
 
 .vote-bar-likes {
   height: 100%;
-  background-color: var(--primary-color);
+  background-color: #387D43; /* Sophisticated Emerald/Forest Green for Likes */
 }
 
 .vote-stats {

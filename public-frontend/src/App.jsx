@@ -10,6 +10,7 @@ import EditArticlePage from './pages/EditArticle/EditArticlePage';
 import Search from './pages/Search/Search';
 import ArticleDetail from './pages/ArticleDetail/ArticleDetail';
 import EventDetail from './pages/EventDetail/EventDetail';
+import EditDetail from './pages/EditDetail/EditDetail';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import About from './pages/Static/About';
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/articles/:id/edit" element={<EditArticlePage sidebarOpen={sidebarOpen} />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/article/:id" element={<ArticleDetail />} />
+                <Route path="/edits/:id" element={<EditDetail />} />
                 <Route path="/event/:id" element={<EventDetail />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />

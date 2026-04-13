@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/user")
@@ -41,6 +42,14 @@ public class UserEditController {
     public ResponseEntity<Map<String, Object>> voteOnEdit(@PathVariable Long id,
                                                           @RequestBody VoteRequest request) {
         return ResponseEntity.ok(voteService.voteOnEdit(id, request.getVoteType(), getCurrentUserId()));
+    }
+
+    @GetMapping("/edits/{id}/vote")
+    public ResponseEntity<Map<String, String>> getUserEditVote(@PathVariable Long id) {
+        String voteType = voteService.getUserVoteType(id, "edit", getCurrentUserId());
+        Map<String, String> response = new HashMap<>();
+        response.put("voteType", voteType);
+        return ResponseEntity.ok(response);
     }
 
     private Long getCurrentUserId() {
